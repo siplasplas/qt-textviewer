@@ -15,14 +15,14 @@ namespace vl {
         LineVec* lines = nullptr;
         int firstWrapIndex = -1;
         int lastWrapIndex = -1;
-        bool wrap = false;
+        bool wrap;
         size_t size() {
             return lines->size();
         }
         std::wstring operator[](size_t index) {
             return lines->at(index).text;
         }
-        ViewResult()= default;
+        ViewResult(bool wrap): wrap(wrap) {}
         ~ViewResult() {
             delete infos;
             delete lines;
@@ -76,6 +76,7 @@ namespace vl {
         int clNextWidth(const char *s, const char *seol, uint cl);
         int64_t correctPossibleBreak(int64_t possibleBreakAt);
         Line fillLine(LineInfo *li, int wrapIndex);
+        void fillLines_loop(ViewResult &vr);
     };
 
 } // vl

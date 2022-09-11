@@ -40,6 +40,17 @@ TEST(Scroll, wrap) {
     EXPECT_EQ(vtest, orig);
     vl.scrollDown(vtest);
     vl.scrollUp(vtest);
+    EXPECT_EQ(vtest.infos->size(), orig.infos->size());
+    for (int i=0; i<std::min(vtest.infos->size(), orig.infos->size()); i++)
+        EXPECT_EQ(*vtest.infos->at(i), *orig.infos->at(i));
+    EXPECT_EQ(vtest.lines->size(), orig.lines->size());
+    for (int i=0; i<std::min(vtest.lines->size(), orig.lines->size()); i++) {
+        auto lineA = vtest.lines->at(i);
+        auto lineB = orig.lines->at(i);
+        EXPECT_EQ(lineA.wrapIndex, lineB.wrapIndex);
+        EXPECT_EQ(*lineA.li, *lineB.li);
+        EXPECT_EQ(lineA.text, lineB.text);
+    }
     EXPECT_EQ(vtest, orig);
     //vl.scrollPageDown(vtest);
     //vl.scrollPageUp(vtest);

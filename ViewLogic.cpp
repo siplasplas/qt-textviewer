@@ -56,7 +56,7 @@ namespace vl {
     }
 
     ViewResult ViewLogic::infosFromBeginScreen(int64_t start) {
-        ViewResult vr;
+        ViewResult vr(wrapMode>0);
         vr.infos = new InfoVec;
         int64_t pos = start;
         while (pos<fileSize && vr.infos->size()<screenLineCount) {
@@ -145,15 +145,17 @@ namespace vl {
         }
     }
 
-    void ViewLogic::fillLines(ViewResult &vr) {
-        delete vr.lines;
-        vr.lines = new LineVec;
-        for (int k=0; k<vr.infos->size(); k++) {
+    void ViewLogic::fillLines_loop(ViewResult &vr) {
+        for (int k=0; k < vr.infos->size(); k++) {
             auto li = vr.infos->at(k);
             assert(li->len>=0);
-            if (!li->len)
-                vr.lines->emplace_back(Line(L"",li, -1));
-            else if (wrapMode==0){
+            if (!li->len) {
+                if (vr.lines->size() >= screenLineCount) return;
+                vr.lines->emplace_back(Line(L"", li, wrapMode ? 0 : -1));
+                if (wrapMode)
+                    vr.lastWrapIndex = 0;
+            }
+            else if (!wrapMode){
                 wstring wstr = fillWithScreenLen(li->offset, li->len);
                 vr.lines->emplace_back(Line(wstr, li, -1));
             } else {
@@ -166,13 +168,26 @@ namespace vl {
                 for (int i=start; i<li->wrapLens.size(); i++)
                 {
                     int wrapLen = li->wrapLens[i];
-                    if (vr.lines->size()>=screenLineCount) break;
+                    if (vr.lines->size() >= screenLineCount) return;
                     wstring wstr = fillWithScreenLen(wrapOffset, wrapLen);
                     vr.lines->emplace_back(Line(wstr, li, i));
+                    vr.lastWrapIndex = i;
                     wrapOffset += wrapLen;
                 }
             }
         }
+    }
+
+    void ViewLogic::fillLines(ViewResult &vr) {
+        assert(vr.wrap==wrapMode>0);
+        delete vr.lines;
+        vr.lines = new LineVec;
+        fillLines_loop(vr);
+        assert(vr.lines->size()==screenLineCount ||
+                       vr.lines->size()==0 && fileSize==BOMsize ||
+                       vr.lines->size()<screenLineCount
+                       && vr.infos->at(0)->offset == BOMsize
+                          && vr.infos->back()->next == fileSize);
     }
 
     wstring ViewLogic::fillWithScreenLen(int64_t offset, int len) {
@@ -406,6 +421,7 @@ namespace vl {
 
     //return actually scrolls done
     int ViewLogic::scrollDown(ViewResult &vr) {
+        assert(vr.wrap==wrapMode>0);
         if (vr.infos->empty()) return 0;
         auto *lastLi = vr.infos->back();
         assert(lastLi->next<=fileSize);
@@ -431,10 +447,12 @@ namespace vl {
         auto newLine = fillLine(newLi, vr.lastWrapIndex);
         vr.lines->push_back(newLine);
         vr.lines->erase(vr.lines->begin());
+        vr.firstWrapIndex = vr.lines->at(0).wrapIndex;
         return 1;
     }
 
     int ViewLogic::scrollUp(ViewResult &vr) {
+        assert(vr.wrap==wrapMode>0);
         if (vr.infos->empty()) return 0;
         auto *firstLi = vr.infos->at(0);
         assert(firstLi->offset>=BOMsize);
@@ -462,6 +480,7 @@ namespace vl {
         auto newLine = fillLine(newLi, vr.firstWrapIndex);
         vr.lines->insert(vr.lines->begin(), newLine);
         vr.lines->pop_back();
+        vr.lastWrapIndex = vr.lines->back().wrapIndex;
         return 1;
     }
 
