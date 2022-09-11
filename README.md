@@ -33,3 +33,18 @@ very long lines are wrapped
 - tabulation \t is changed to spaces , but variable length spaces, from 1 to max,
 tab spaces intended to equal place of screen
 - beside goto, scrolling to small distances: one line down and up, one page down and up 
+
+How was done length limit of lines? It is impractical to divide line in points 10000, 
+20000, 30000 from begin line (if segment size was set to 10k unicode chars).
+First - utf8 char lengths are variable, second, more important, that lines are 
+searching in both directions. It can't first go to begin whole line, because file 
+contains only one line and would have hundreds of gigabytes.
+Break point are 10000,20000, 30000 but from beginning file, not line.
+This is simplification. Two issues:for exmample point 20000 is needed to correct 
+to 20001 or 20002 due to
+- break point can't be inside utf8 code, add 1 or a few 
+- break point can't be inside \r\n sequence, add 1
+- 
+Second issue is that is not nice divide line near beginning, for example breakpoint 
+randomly will at line[15], worse, every line has a chance to be divided, not only long line.
+To avoid this, each line skip first breakpoint and divide on further.
