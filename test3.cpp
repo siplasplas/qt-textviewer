@@ -22,3 +22,31 @@ TEST(Unicode, width) {
     for (int i=0; i<min(vtest.size(),vexpect.size()); i++)
         EXPECT_EQ(vtest[i], vexpect[i]);
 }
+
+TEST(Unicode, wrap) {
+    string content = makeContent("../test/utf8.txt");
+    ViewLogic vl(content.c_str(), content.length());
+    vl.screenLineLen = 10;
+    vl.screenLineCount = 20;
+    vl.wrapMode = 1;
+    vl.maxLineLen = 1000;
+    auto vexpect = makeExpect("../expect/utf8_first20wrap10.txt");
+    auto vtest = vl.linesFromBeginScreen(0);
+    EXPECT_EQ(vexpect.size(), vtest.size());
+    for (int i=0; i<min(vtest.size(),vexpect.size()); i++)
+        EXPECT_EQ(vtest[i], vexpect[i]);
+}
+
+TEST(Unicode, maxline) {
+    string content = makeContent("../test/utf8.txt");
+    ViewLogic vl(content.c_str(), content.length());
+    vl.screenLineLen = 100;
+    vl.screenLineCount = 40;
+    vl.wrapMode = 0;
+    vl.maxLineLen = 10;
+    auto vexpect = makeExpect("../expect/utf8_first40m10.txt");
+    auto vtest = vl.linesFromBeginScreen(0);
+    EXPECT_EQ(vexpect.size(), vtest.size());
+    for (int i=0; i<min(vtest.size(),vexpect.size()); i++)
+        EXPECT_EQ(vtest[i], vexpect[i]);
+}

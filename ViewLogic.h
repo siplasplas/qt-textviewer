@@ -57,6 +57,7 @@ namespace vl {
         uint codeClass(unsigned int c);
         int clLastWidth(const dstring &dstr, int width, uint cl);
         int clNextWidth(const char *s, const char *seol, uint cl);
+        int64_t correctPossibleBreak(int64_t possibleBreakAt);
     };
 
 } // vl

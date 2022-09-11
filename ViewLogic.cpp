@@ -71,15 +71,17 @@ namespace vl {
     int64_t ViewLogic::searchEndOfLine(int64_t startOffset) {
         int64_t offset = startOffset;
         int64_t possibleBreakAt = (offset/maxLineLen)*maxLineLen+maxLineLen;
-        while ( offset<fileSize && !isNewlineChar(addr[offset]) && offset < possibleBreakAt )
+        int64_t possibleBreakCorrected = correctPossibleBreak(possibleBreakAt);
+        while ( offset<fileSize && !isNewlineChar(addr[offset]) && offset < possibleBreakCorrected )
             offset++;
-        assert(offset==fileSize || isNewlineChar(addr[offset]) || offset==possibleBreakAt );
-        if (offset == possibleBreakAt && isFirstChunkStart(startOffset)) {
+        assert(offset==fileSize || isNewlineChar(addr[offset]) || offset==possibleBreakCorrected );
+        if (offset == possibleBreakCorrected && isFirstChunkStart(startOffset)) {
             possibleBreakAt += maxLineLen;
-            while(offset<fileSize && !isNewlineChar(addr[offset]) && offset < possibleBreakAt)
+            possibleBreakCorrected = correctPossibleBreak(possibleBreakAt);
+            while(offset<fileSize && !isNewlineChar(addr[offset]) && offset < possibleBreakCorrected)
                 offset++;
         }
-        assert(offset==fileSize || isNewlineChar(addr[offset])|| offset==possibleBreakAt);
+        assert(offset==fileSize || isNewlineChar(addr[offset])|| offset==possibleBreakCorrected);
         return offset;
     }
 
@@ -187,11 +189,14 @@ namespace vl {
     int64_t ViewLogic::gotoBeginNonEmptyLine(int64_t start) {
         assert(start<fileSize && !isNewlineChar(addr[start]));
         int64_t possibleBreakAt = (start/maxLineLen)*maxLineLen;
-        if (possibleBreakAt>=start)
-            possibleBreakAt -= maxLineLen;
+        int64_t possibleBreakCorrected = correctPossibleBreak(possibleBreakAt);
+        if (possibleBreakCorrected>start && possibleBreakAt>=maxLineLen) {
+            possibleBreakAt-=maxLineLen;
+            possibleBreakCorrected = correctPossibleBreak(possibleBreakAt);
+        }
         int64_t offset = start;
-        while (offset>BOMsize && !isNewlineChar(addr[offset-1]) ) {
-            if (offset==possibleBreakAt) {
+        while (offset>BOMsize && !isNewlineChar(addr[offset-1])) {
+            if (offset==possibleBreakCorrected) {
                 if (!isFirstChunkInside(offset))
                     return offset;
             }
@@ -320,6 +325,15 @@ namespace vl {
             s1++;
         }
         return countNext;
+    }
+
+    int64_t ViewLogic::correctPossibleBreak(int64_t possibleBreakAt) {
+        if (possibleBreakAt<BOMsize || possibleBreakAt>=fileSize)
+            return possibleBreakAt;
+        if (addr[possibleBreakAt]=='\n' && possibleBreakAt>BOMsize && addr[possibleBreakAt-1]=='\r')
+            return possibleBreakAt+1;
+        UTF utf;
+        return utf.findNextUtf8OrTheSame(addr + possibleBreakAt, addr + std::max((int64_t)BOMsize, possibleBreakAt - (UTF::MAXCHARLEN-1)), addr + fileSize) - addr;
     }
 
 } // vl
