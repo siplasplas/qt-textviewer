@@ -14,13 +14,23 @@ namespace vl {
         InfoVec* infos = nullptr;
         LineVec* lines = nullptr;
         int firstWrapIndex = -1;
+        int lastWrapIndex = -1;
+        bool wrap = false;
         size_t size() {
             return lines->size();
         }
         std::wstring operator[](size_t index) {
             return lines->at(index).text;
         }
+        ViewResult()= default;
+        ~ViewResult() {
+            delete infos;
+            delete lines;
+        }
+        ViewResult( const ViewResult& );
+        ViewResult &operator=( const ViewResult &src);
         bool operator==( const ViewResult &src) const;
+        void clone(const ViewResult &src);
     };
 
     class ViewLogic {
@@ -38,6 +48,10 @@ namespace vl {
         ViewResult linesFromBeginScreen(int64_t start);
         LineOwner getBeginPos(int64_t position);
         ViewResult lines(int64_t position);
+        bool scrollDown(ViewResult &vr);
+        bool scrollUp(ViewResult &vr);
+        bool scrollPageDown(ViewResult &vr);
+        bool scrollPageUp(ViewResult &vr);
     private:
         ViewResult linesFromBeginScreen(const LineOwner& start);
         ViewResult infosFromBeginScreen(int64_t start);
@@ -59,6 +73,7 @@ namespace vl {
         int clLastWidth(const dstring &dstr, int width, uint cl);
         int clNextWidth(const char *s, const char *seol, uint cl);
         int64_t correctPossibleBreak(int64_t possibleBreakAt);
+        Line fillLine(LineInfo *li, int wrapIndex);
     };
 
 } // vl

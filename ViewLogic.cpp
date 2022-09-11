@@ -9,6 +9,39 @@
 using namespace std;
 
 namespace vl {
+    ViewResult::ViewResult(const ViewResult &src) {
+        clone(src);
+    }
+
+    ViewResult &ViewResult::operator=( const ViewResult &src) {
+        if(this == &src){
+            return *this;
+        }
+        clone(src);
+        return *this;
+    }
+
+    void ViewResult::clone( const ViewResult &src) {
+        wrap = src.wrap;
+        firstWrapIndex = src.firstWrapIndex;
+        lastWrapIndex = src.lastWrapIndex;
+        if (src.infos) {
+            if (!infos)
+                infos = new InfoVec;
+            *infos = *src.infos;
+        } else {
+            delete infos;
+            infos = nullptr;
+        }
+        if (src.lines) {
+            if (!lines)
+                lines = new LineVec;
+            *lines = *src.lines;
+        } else {
+            delete lines;
+            lines = nullptr;
+        }
+    }
 
     bool ViewResult::operator==(const ViewResult &src) const {
         if (infos && !src.infos) return false;
@@ -97,6 +130,18 @@ namespace vl {
             return min(pos+1,fileSize-1);
         else {//MaxLine break
             return pos;
+        }
+    }
+
+    Line ViewLogic::fillLine(LineInfo *li, int wrapIndex) {
+        if (!li->len)
+            return Line(L"",li, -1);
+        if (wrapIndex<0) {
+            wstring wstr = fillWithScreenLen(li->offset, li->len);
+            return Line(wstr, li, -1);
+        } else {
+            wstring wstr = fillWithScreenLen(li->wrapOffset(wrapIndex), li->wrapLens[wrapIndex]);
+            return Line(wstr, li, wrapIndex);
         }
     }
 
@@ -357,6 +402,71 @@ namespace vl {
             return possibleBreakAt+1;
         UTF utf;
         return utf.findNextUtf8OrTheSame(addr + possibleBreakAt, addr + std::max((int64_t)BOMsize, possibleBreakAt - (UTF::MAXCHARLEN-1)), addr + fileSize) - addr;
+    }
+
+    //return actually scrolls done
+    bool ViewLogic::scrollDown(ViewResult &vr) {
+        if (vr.infos->empty()) return false;
+        auto *lastLi = vr.infos->back();
+        if (vr.wrap) {
+            assert(vr.lastWrapIndex >= 0);
+            vr.lastWrapIndex++;
+            if (vr.lastWrapIndex >= lastLi->wrapLens.size()) {
+                vr.lastWrapIndex = 0;
+                auto *li = new LineInfo;
+                updateInfo(lastLi->next, li);
+                vr.infos->push_back(li);
+                vr.infos->erase(vr.infos->begin());
+            }
+        } else {
+            auto *li = new LineInfo;
+            updateInfo(lastLi->next, li);
+            vr.infos->push_back(li);
+            vr.infos->erase(vr.infos->begin());
+        }
+        auto newLi = vr.infos->back();
+        auto newLine = fillLine(newLi, vr.lastWrapIndex);
+        vr.lines->push_back(newLine);
+        vr.lines->erase(vr.lines->begin());
+        return true;
+    }
+
+    bool ViewLogic::scrollUp(ViewResult &vr) {
+        if (vr.infos->empty()) return false;
+        auto *firstLi = vr.infos->at(0);
+        if (vr.wrap) {
+            assert(vr.firstWrapIndex >= 0);
+            vr.firstWrapIndex--;
+            if (vr.firstWrapIndex < 0) {
+                vr.firstWrapIndex = firstLi->wrapLens.size() - 1;
+                auto *li = new LineInfo;
+                int64_t linePos = gotoBeginLine(li->offset-1);
+                updateInfo(linePos, li);
+                vr.infos->insert(vr.infos->begin(), li);
+                vr.infos->pop_back();
+            }
+        } else {
+            auto *li = new LineInfo;
+            int64_t linePos = gotoBeginLine(firstLi->offset-1);
+            updateInfo(linePos, li);
+            vr.infos->insert(vr.infos->begin(), li);
+            vr.infos->pop_back();
+        }
+        auto newLi = vr.infos->at(0);
+        auto newLine = fillLine(newLi, vr.firstWrapIndex);
+        vr.lines->insert(vr.lines->begin(), newLine);
+        vr.lines->pop_back();
+        return true;
+    }
+
+    bool ViewLogic::scrollPageDown(ViewResult &vr) {
+        if (vr.infos->empty()) return false;
+        return true;
+    }
+
+    bool ViewLogic::scrollPageUp(ViewResult &vr) {
+        if (vr.infos->empty()) return false;
+        return true;
     }
 
 } // vl

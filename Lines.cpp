@@ -24,6 +24,13 @@ namespace vl {
         return !(*this==src);
     }
 
+    int64_t LineInfo::wrapOffset(int wrapIndex) {
+        int64_t woffset = offset;
+        for (int i=0; i<wrapIndex; i++)
+            woffset += wrapLens[i];
+        return woffset;
+    }
+
     LineOwner::LineOwner(int64_t offset, bool wrap, ViewLogic* vl) : vl(vl), wrap(wrap) {
         int64_t linePos = vl->gotoBeginLine(offset);
         li = new LineInfo;
