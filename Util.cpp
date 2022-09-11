@@ -178,5 +178,8 @@ string makeContent(string filename) {
 }
 
 vector<wstring> makeExpect(string filename) {
-    return toUTF16(removeLFExpect(unslashExpect(clear(readLines(filename)))));
+    auto v = toUTF16(removeLFExpect(unslashExpect(clear(readLines(filename)))));
+    if (v.empty())
+        throw runtime_error("empty test expect");
+    return v;
 }

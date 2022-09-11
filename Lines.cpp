@@ -23,7 +23,7 @@ namespace vl {
         return !(*this==src);
     }
 
-    LineOwner::LineOwner(int64_t offset, ViewLogic *vl) : vl(vl) {
+    LineOwner::LineOwner(int64_t offset, bool wrap, ViewLogic* vl) : vl(vl) {
         int64_t linePos = vl->gotoBeginLine(offset);
         li = new LineInfo;
         vl->updateInfo(linePos, li);

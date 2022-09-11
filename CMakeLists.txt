@@ -6,6 +6,6 @@ add_definitions("-Werror=return-type")
 add_executable(${PROJECT_NAME}
         ViewLogic.cpp ViewLogic.h
         Lines.h Util.cpp Util.h
-        test1.cpp Lines.cpp)
+        test1.cpp Lines.cpp test2.cpp)
 
 target_link_libraries(${PROJECT_NAME} gtest gtest_main)

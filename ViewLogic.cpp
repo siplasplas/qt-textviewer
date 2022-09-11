@@ -37,7 +37,7 @@ namespace vl {
     }
 
     ViewResult ViewLogic::linesFromBeginScreen(int64_t start) {
-        return linesFromBeginScreen(LineOwner(start, this));
+        return linesFromBeginScreen(LineOwner(start, wrapMode>0, this));
     }
 
     ViewResult ViewLogic::linesFromBeginScreen(const LineOwner& start) {
@@ -54,6 +54,10 @@ namespace vl {
         else
             endPos = searchEndOfLine(offset);
         li->len = endPos-offset;
+        if (wrapMode>0 && li->len>0)
+            li->wrapLens = computeWrapLens(offset, li->len);
+        else
+            li->wrapLens.clear();
         if (li->len==0 && offset==fileSize-1)
             li->next = fileSize;
         else
@@ -100,10 +104,21 @@ namespace vl {
         for (auto *li: *vr.infos) {
             assert(li->len>=0);
             if (!li->len)
-                vr.lines->emplace_back(Line(L"",li));
-            else {
+                vr.lines->emplace_back(Line(L"",li, -1));
+            else if (wrapMode==0){
                 wstring wstr = fillWithScreenLen(li->offset, li->len);
-                vr.lines->emplace_back(Line(wstr, li));
+                vr.lines->emplace_back(Line(wstr, li, -1));
+            } else {
+                assert(!li->wrapLens.empty());
+                int64_t wrapOffset = li->offset;
+                for (int i=0; i<li->wrapLens.size(); i++)
+                {
+                    int wrapLen = li->wrapLens[i];
+                    if (vr.lines->size()>=screenLineCount) break;
+                    wstring wstr = fillWithScreenLen(wrapOffset, wrapLen);
+                    vr.lines->emplace_back(Line(wstr, li, i));
+                    wrapOffset += wrapLen;
+                }
             }
         }
     }
@@ -177,13 +192,13 @@ namespace vl {
         position = min(position, fileSize);
         assert(screenLineCount>=0);
         assert(position<=fileSize);
-        if (!screenLineCount) return {position, this};
+        if (!screenLineCount) return {position, wrapMode>0,this};
         int backCount;
         if (position<fileSize) {
             backCount = ceill((long double)(position-BOMsize) / (fileSize-BOMsize) * (screenLineCount-1));
         } else
             backCount = ceill((long double)(position-BOMsize) / (fileSize-BOMsize) * screenLineCount);
-        LineOwner lineOwner(position, this);
+        LineOwner lineOwner(position,wrapMode>0, this);
         lineOwner.backNlines(backCount);
         return lineOwner;
     }
@@ -210,6 +225,32 @@ namespace vl {
                 return false;
             }
         return true;
+    }
+
+    vector<int> ViewLogic::computeWrapLens(int64_t offset, int len) {
+        vector<int> screenLines;
+        const char *s = addr + offset;
+        const char *seol = s + len;
+        const char *sprev = s;
+        int width = 0;
+        while (s < seol) {
+            UTF utf;
+            const char *end;
+            utf.one8to32(s, seol, &end);
+            s = end;
+            width++;
+            if (width == screenLineLen) {
+                screenLines.push_back(int(s - sprev));
+                width = 0;
+                sprev = s;
+            }
+        }
+        //last, shorter line
+        if (width > 0) {
+            screenLines.push_back(int(s - sprev));
+        }
+        assert(!screenLines.empty());
+        return screenLines;
     }
 
 } // vl

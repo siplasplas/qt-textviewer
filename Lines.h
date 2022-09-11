@@ -15,6 +15,7 @@ namespace vl {
         int64_t offset;
         int len; //without endline char, can be zero
         int64_t next;
+        std::vector<int> wrapLens;
         bool operator==(const LineInfo &src) const;
         bool operator!=(const LineInfo &src) const;
     };
@@ -22,9 +23,9 @@ namespace vl {
     struct Line {
         std::wstring text;
         const LineInfo *li = nullptr;
-
-        Line(std::wstring text, const LineInfo *li) :
-                text(std::move(text)), li(li) {}
+        int wrapIndex = -1;
+        Line(std::wstring text, const LineInfo *li, int wrapIndex):
+                text(std::move(text)), li(li), wrapIndex(wrapIndex) {}
         bool operator==(const Line &src) const;
     };
 
@@ -35,9 +36,11 @@ namespace vl {
 
     struct LineOwner {
         LineInfo *li = nullptr;
+        int wrapIndex = -1;
+        bool wrap;
         ViewLogic *vl;
         LineOwner() = default;
-        LineOwner(int64_t offset, ViewLogic *vl);
+        LineOwner(int64_t offset, bool wrap, ViewLogic* vl);
         ~LineOwner() {
             delete li;
         }
@@ -46,6 +49,7 @@ namespace vl {
         LineOwner(const LineOwner &src);
         LineOwner &operator=( const LineOwner &src);
         void clone(const LineOwner &src);
+        int getWrapIndex(int64_t offset);
     };
 
 }
