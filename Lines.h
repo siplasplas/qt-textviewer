@@ -33,14 +33,16 @@ namespace vl {
     struct LineOwner {
         LineInfo *li = nullptr;
         ViewLogic *vl;
-
         LineOwner() = default;
-
         LineOwner(int64_t offset, ViewLogic *vl);
-
         ~LineOwner() {
             delete li;
         }
+        void backNlines(int n);
+        void backLine();
+        LineOwner(const LineOwner &src);
+        LineOwner &operator=( const LineOwner &src);
+        void clone(const LineOwner &src);
     };
 
 }

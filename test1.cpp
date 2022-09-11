@@ -20,3 +20,17 @@ TEST (Width, empties) {
     for (int i=0; i<min(vtest.size(),vexpect.size()); i++)
         EXPECT_EQ(vtest[i], vexpect[i]);
 }
+
+TEST(Back, positions) {
+    string content = makeContent("../test/empties.txt");
+    ViewLogic vl(content.c_str(), content.length());
+    vl.screenLineLen = 8;
+    vl.screenLineCount = 50; //enough forall lines
+    auto vexpect = vl.linesFromBeginScreen(0);
+    vl.screenLineCount = 0;
+    EXPECT_EQ(vl.getBeginPos(content.length()).li->offset, content.length());
+    for (int i=1; i<vexpect.size(); i++) {
+        vl.screenLineCount = i;
+        EXPECT_EQ(vl.getBeginPos(content.length()).li->offset, vexpect.lines->at(vexpect.size()-i).li->offset);
+    }
+}

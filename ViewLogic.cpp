@@ -3,6 +3,7 @@
 //
 
 #include <cassert>
+#include <cmath>
 #include "ViewLogic.h"
 #include "utf/UTF.hpp"
 
@@ -142,6 +143,23 @@ namespace vl {
         while (offset>BOMsize && !isNewlineChar(addr[offset-1]))
             offset--;
         return offset;
+    }
+
+    LineOwner ViewLogic::getBeginPos(int64_t position) {
+        assert(fileSize>=0);
+        if (!fileSize) return {};
+        position = min(position, fileSize);
+        assert(screenLineCount>=0);
+        assert(position<=fileSize);
+        if (!screenLineCount) return {position, this};
+        int backCount;
+        if (position<fileSize) {
+            backCount = ceill((long double)(position-BOMsize) / (fileSize-BOMsize) * (screenLineCount-1));
+        } else
+            backCount = ceill((long double)(position-BOMsize) / (fileSize-BOMsize) * screenLineCount);
+        LineOwner lineOwner(position, this);
+        lineOwner.backNlines(backCount);
+        return lineOwner;
     }
 
 } // vl
