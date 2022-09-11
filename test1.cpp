@@ -61,7 +61,6 @@ TEST (Max, forward) {
 }
 
 TEST(Max, backward) {
-    GTEST_SKIP();
     string content = makeContent("../test/max.txt");
     ViewLogic vl(content.c_str(), content.length());
     vl.screenLineLen = 100;

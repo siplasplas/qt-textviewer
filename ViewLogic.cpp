@@ -161,8 +161,13 @@ namespace vl {
         if (possibleBreakAt>=start)
             possibleBreakAt -= maxLineLen;
         int64_t offset = start;
-        while (offset>BOMsize && !isNewlineChar(addr[offset-1]) && offset>possibleBreakAt)
+        while (offset>BOMsize && !isNewlineChar(addr[offset-1]) ) {
+            if (offset==possibleBreakAt) {
+                if (!isFirstChunkInside(offset))
+                    return offset;
+            }
             offset--;
+        }
         return offset;
     }
 
@@ -189,6 +194,22 @@ namespace vl {
 
     bool ViewLogic::isFirstChunkStart(int64_t offset) {
         return offset<=BOMsize || isNewlineChar(addr[offset-1]);
+    }
+
+    bool ViewLogic::isFirstChunkInside(int64_t offset) {
+        return !startInsideSegment(offset-maxLineLen);
+    }
+
+    bool ViewLogic::startInsideSegment(int64_t offset) {
+        if (offset<=BOMsize) return false;
+        int64_t nSegment = offset/maxLineLen;
+        int64_t start = (max((int64_t)BOMsize+1, nSegment*maxLineLen))-1;
+        int64_t end = (nSegment*maxLineLen+maxLineLen)-1;
+        for (int64_t pos = start; pos<end; pos++)
+            if (isNewlineChar(addr[pos])) {
+                return false;
+            }
+        return true;
     }
 
 } // vl
