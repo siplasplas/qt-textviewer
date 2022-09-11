@@ -58,3 +58,17 @@ TEST (Max, forward) {
     for (int i=0; i<min(vtest.size(),vexpect.size()); i++)
         EXPECT_EQ(vtest[i], vexpect[i]);
 }
+
+TEST(Max, backward) {
+    string content = makeContent("../test/max.txt");
+    ViewLogic vl(content.c_str(), content.length());
+    vl.screenLineLen = 100;
+    vl.screenLineCount = 21;
+    vl.maxLineLen = 40;
+    auto vexpect = vl.linesFromBeginScreen(0);
+    vl.screenLineCount = vexpect.size();
+    auto vtest = vl.lines(content.length());
+    EXPECT_EQ(vexpect.size(), vtest.size());
+    for (int i=0; i<min(vtest.size(),vexpect.size()); i++)
+        EXPECT_EQ(vtest[i], vexpect[i]);
+}

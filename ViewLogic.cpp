@@ -151,8 +151,11 @@ namespace vl {
 
     int64_t ViewLogic::gotoBeginNonEmptyLine(int64_t start) {
         assert(start<fileSize && !isNewlineChar(addr[start]));
+        int64_t possibleBreakAt = (start/maxLineLen)*maxLineLen;
+        if (possibleBreakAt>=start)
+            possibleBreakAt -= maxLineLen;
         int64_t offset = start;
-        while (offset>BOMsize && !isNewlineChar(addr[offset-1]))
+        while (offset>BOMsize && !isNewlineChar(addr[offset-1]) && offset>possibleBreakAt)
             offset--;
         return offset;
     }
