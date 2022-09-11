@@ -47,6 +47,7 @@ namespace vl {
         int64_t gotoFirstOfCRLF(int64_t offset);
         bool lineIsEmpty(int64_t offset);
         int64_t gotoBeginNonEmptyLine(int64_t start);
+        bool isFirstChunkStart(int64_t offset);
     };
 
 } // vl

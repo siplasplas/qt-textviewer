@@ -70,6 +70,12 @@ namespace vl {
         while ( offset<fileSize && !isNewlineChar(addr[offset]) && offset < possibleBreakAt )
             offset++;
         assert(offset==fileSize || isNewlineChar(addr[offset]) || offset==possibleBreakAt );
+        if (offset == possibleBreakAt && isFirstChunkStart(startOffset)) {
+            possibleBreakAt += maxLineLen;
+            while(offset<fileSize && !isNewlineChar(addr[offset]) && offset < possibleBreakAt)
+                offset++;
+        }
+        assert(offset==fileSize || isNewlineChar(addr[offset])|| offset==possibleBreakAt);
         return offset;
     }
 
@@ -179,6 +185,10 @@ namespace vl {
 
     ViewResult ViewLogic::lines(int64_t position) {
         return linesFromBeginScreen(getBeginPos(position));
+    }
+
+    bool ViewLogic::isFirstChunkStart(int64_t offset) {
+        return offset<=BOMsize || isNewlineChar(addr[offset-1]);
     }
 
 } // vl
