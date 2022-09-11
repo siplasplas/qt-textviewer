@@ -465,14 +465,36 @@ namespace vl {
         return 1;
     }
 
-    bool ViewLogic::scrollPageDown(ViewResult &vr) {
+    bool ViewLogic::scrollNDown(int n, ViewResult &vr) {
         if (vr.infos->empty()) return false;
-        return true;
+        int result = 0;
+        for (int i=0; i<n; i++) {
+            int res = scrollDown(vr);
+            if (res<1)
+                return result;
+            result += res;
+        }
+        return result;
+    }
+
+    bool ViewLogic::scrollNUp(int n, ViewResult &vr) {
+        if (vr.infos->empty()) return false;
+        int result = 0;
+        for (int i=0; i<n; i++) {
+            int res = scrollUp(vr);
+            if (res<1)
+                return result;
+            result += res;
+        }
+        return result;
+    }
+
+    bool ViewLogic::scrollPageDown(ViewResult &vr) {
+        return scrollNDown(screenLineCount, vr);
     }
 
     bool ViewLogic::scrollPageUp(ViewResult &vr) {
-        if (vr.infos->empty()) return false;
-        return true;
+        return scrollNUp(screenLineCount, vr);
     }
 
 } // vl

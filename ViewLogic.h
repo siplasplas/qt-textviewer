@@ -50,6 +50,8 @@ namespace vl {
         ViewResult lines(int64_t position);
         int scrollDown(ViewResult &vr);
         int scrollUp(ViewResult &vr);
+        bool scrollNDown(int n, ViewResult &vr);
+        bool scrollNUp(int n, ViewResult &vr);
         bool scrollPageDown(ViewResult &vr);
         bool scrollPageUp(ViewResult &vr);
     private:

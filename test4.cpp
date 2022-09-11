@@ -17,13 +17,11 @@ TEST(Scroll, width) {
     vl.screenLineCount = 3;
     vl.wrapMode = 0;
 
-    auto vtest = vl.lines(vl.fileSize);
+    auto vtest = vl.lines(0);
     auto orig = vtest;
     EXPECT_EQ(vtest, orig);
     vl.scrollDown(vtest);
-    vl.scrollDown(vtest);
-    //vl.scrollUp(vtest);
-    //vl.scrollUp(vtest);
+    vl.scrollUp(vtest);
     EXPECT_EQ(vtest, orig);
     vl.scrollPageDown(vtest);
     vl.scrollPageUp(vtest);
@@ -33,8 +31,8 @@ TEST(Scroll, width) {
 TEST(Scroll, wrap) {
     string content = makeContent("../test/midlines.txt");
     ViewLogic vl(content.c_str(), content.length());
-    vl.screenLineLen = 10;
-    vl.screenLineCount = 5;
+    vl.screenLineLen = 6;
+    vl.screenLineCount = 3;
     vl.wrapMode = 1;
 
     auto vtest = vl.lines(0);
@@ -43,7 +41,9 @@ TEST(Scroll, wrap) {
     vl.scrollDown(vtest);
     vl.scrollUp(vtest);
     EXPECT_EQ(vtest, orig);
-    vl.scrollPageDown(vtest);
-    vl.scrollPageUp(vtest);
+    //vl.scrollPageDown(vtest);
+    //vl.scrollPageUp(vtest);
+    vl.scrollNDown(2,vtest);
+    vl.scrollNUp(2, vtest);
     EXPECT_EQ(vtest, orig);
 }
