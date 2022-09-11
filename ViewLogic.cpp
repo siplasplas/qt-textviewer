@@ -206,6 +206,7 @@ namespace vl {
     }
 
     LineOwner ViewLogic::getBeginPos(int64_t position) {
+        assert(maxLineLen>=UTF::MAXCHARLEN);
         assert(fileSize>=0);
         if (!fileSize) return {};
         position = min(position, fileSize);
@@ -235,7 +236,7 @@ namespace vl {
     }
 
     bool ViewLogic::startInsideSegment(int64_t offset) {
-        if (offset<=BOMsize) return false;
+        if (offset<=BOMsize+UTF::MAXCHARLEN-1) return false;
         int64_t nSegment = offset/maxLineLen;
         int64_t start = (max((int64_t)BOMsize+1, nSegment*maxLineLen))-1;
         int64_t end = (nSegment*maxLineLen+maxLineLen)-1;
