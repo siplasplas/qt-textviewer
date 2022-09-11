@@ -68,6 +68,7 @@ TEST(Max, backward) {
     auto vexpect = vl.linesFromBeginScreen(0);
     vl.screenLineCount = vexpect.size();
     auto vtest = vl.lines(content.length());
+    EXPECT_GT(vexpect.size(), 0);
     EXPECT_EQ(vexpect.size(), vtest.size());
     for (int i=0; i<min(vtest.size(),vexpect.size()); i++)
         EXPECT_EQ(vtest[i], vexpect[i]);
