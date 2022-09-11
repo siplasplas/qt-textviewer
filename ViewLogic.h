@@ -34,6 +34,7 @@ namespace vl {
         int screenLineCount = 0;
         int maxLineLen = 10000;
         int wrapMode = 0;
+        int maxTabW = 1;
         ViewResult linesFromBeginScreen(int64_t start);
         LineOwner getBeginPos(int64_t position);
         ViewResult lines(int64_t position);

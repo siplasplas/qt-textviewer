@@ -137,10 +137,20 @@ namespace vl {
         const char *eol = addr + offset + len;
         int k=0;
         while (s<eol && k<screenLineLen) {
-            const char *end;
-            dstr[k] = utf.one8to32(s, eol, &end);
-            s = end;
-            k++;
+            if (*s=='\t') {
+                s++;
+                dstr[k] = ' '; //minimal space width==1
+                k++;
+                while (k<screenLineLen && (k % maxTabW) != 0) {
+                    dstr[k] = ' ';
+                    k++;
+                }
+            } else {
+                const char *end;
+                dstr[k] = utf.one8to32(s, eol, &end);
+                s = end;
+                k++;
+            }
         }
         dstr.resize(k);
         return utf.u32to16(dstr);
@@ -256,10 +266,22 @@ namespace vl {
         int width = 0;
         while (s < seol) {
             UTF utf;
-            const char *end;
-            dstr[width] = utf.one8to32(s, seol, &end);
-            s = end;
-            width++;
+            if (*s=='\t') {
+                s++;
+                dstr[width] = ' '; //minimal space width==1
+                width++;
+                while (width<screenLineLen && (width % maxTabW) != 0) {
+                    dstr[width] = ' ';
+                    width++;
+                }
+            }
+            else
+            {
+                const char *end;
+                dstr[width] = utf.one8to32(s, seol, &end);
+                s = end;
+                width++;
+            }
             if (width == screenLineLen) {
                 //------
                 if (wrapMode == 2) {
