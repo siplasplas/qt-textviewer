@@ -12,6 +12,7 @@ namespace vl {
     struct ViewResult {
         InfoVec* infos = nullptr;
         LineVec* lines = nullptr;
+        int firstWrapIndex = -1;
         size_t size() {
             return lines->size();
         }

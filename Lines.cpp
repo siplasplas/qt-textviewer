@@ -1,6 +1,7 @@
 //
 // Created by Andrzej Borucki on 2022-09-11
 //
+#include <cassert>
 #include "Lines.h"
 #include "ViewLogic.h"
 
@@ -23,16 +24,22 @@ namespace vl {
         return !(*this==src);
     }
 
-    LineOwner::LineOwner(int64_t offset, bool wrap, ViewLogic* vl) : vl(vl) {
+    LineOwner::LineOwner(int64_t offset, bool wrap, ViewLogic* vl) : vl(vl), wrap(wrap) {
         int64_t linePos = vl->gotoBeginLine(offset);
         li = new LineInfo;
         vl->updateInfo(linePos, li);
+        if (wrap) {
+            wrapIndex = getWrapIndex(offset);
+            //if after loop wrapIndex == li->wrapLens.size() => position after line, at LF char
+        }
     }
 
     void LineOwner::clone(const LineOwner &src) {
         if (li)
             delete li;
         li = new LineInfo;
+        wrapIndex = src.wrapIndex;
+        wrap = src.wrap;
         *li = *src.li;
         vl = src.vl;
     }
@@ -55,8 +62,33 @@ namespace vl {
     }
 
     void LineOwner::backLine() {
-        int64_t linePos = vl->gotoBeginLine(li->offset-1);
-        vl->updateInfo(linePos, li);
+        if (wrap) {
+            wrapIndex--;
+            if (wrapIndex<0) {
+                int64_t linePos = vl->gotoBeginLine(li->offset-1);
+                vl->updateInfo(linePos, li);
+                assert(!li->wrapLens.empty() || !li->len);
+                wrapIndex = (int)li->wrapLens.size()-1;
+            }
+        }
+        else {
+            int64_t linePos = vl->gotoBeginLine(li->offset-1);
+            vl->updateInfo(linePos, li);
+        }
+    }
+
+    int LineOwner::getWrapIndex(int64_t offset) {
+        int64_t wrapPosition = li->offset + li->len;
+        int resultIndex = 0;
+        for (int i=0; i < li->wrapLens.size(); ++i) {
+            int len = li->wrapLens[i];
+            wrapPosition += len;
+            if(wrapPosition>offset) {
+                resultIndex = i;
+                break;
+            }
+        }
+        return resultIndex;
     }
 
 }

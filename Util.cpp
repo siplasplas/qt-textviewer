@@ -174,6 +174,8 @@ string join(const vector<string>& v) {
 string makeContent(string filename) {
     auto v = unslashTest(clear(readLines(filename)));
     string content = join(v);
+    if (v.empty())
+        throw runtime_error("empty test sample");
     return content;
 }
 

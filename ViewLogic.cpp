@@ -42,6 +42,7 @@ namespace vl {
 
     ViewResult ViewLogic::linesFromBeginScreen(const LineOwner& start) {
         auto vr= infosFromBeginScreen(start.li->offset);
+        vr.firstWrapIndex = start.wrapIndex;
         fillLines(vr);
         return vr;
     }
@@ -54,7 +55,7 @@ namespace vl {
         else
             endPos = searchEndOfLine(offset);
         li->len = endPos-offset;
-        if (wrapMode>0 && li->len>0)
+        if (wrapMode>0)
             li->wrapLens = computeWrapLens(offset, li->len);
         else
             li->wrapLens.clear();
@@ -101,7 +102,8 @@ namespace vl {
     void ViewLogic::fillLines(ViewResult &vr) {
         delete vr.lines;
         vr.lines = new LineVec;
-        for (auto *li: *vr.infos) {
+        for (int k=0; k<vr.infos->size(); k++) {
+            auto li = vr.infos->at(k);
             assert(li->len>=0);
             if (!li->len)
                 vr.lines->emplace_back(Line(L"",li, -1));
@@ -111,7 +113,11 @@ namespace vl {
             } else {
                 assert(!li->wrapLens.empty());
                 int64_t wrapOffset = li->offset;
-                for (int i=0; i<li->wrapLens.size(); i++)
+                assert(vr.firstWrapIndex>=0);
+                int start = k==0? vr.firstWrapIndex:0;
+                for (int i=0; i<start; i++)
+                    wrapOffset += li->wrapLens[i];
+                for (int i=start; i<li->wrapLens.size(); i++)
                 {
                     int wrapLen = li->wrapLens[i];
                     if (vr.lines->size()>=screenLineCount) break;
@@ -246,7 +252,7 @@ namespace vl {
             }
         }
         //last, shorter line
-        if (width > 0) {
+        if (width > 0 || len==0) {
             screenLines.push_back(int(s - sprev));
         }
         assert(!screenLines.empty());
