@@ -80,3 +80,17 @@ TEST(Wrap, backward_short_any) {
     for (int i=0; i<min(vtest.size(),vexpect.size()-1); i++)
         EXPECT_EQ(vtest[i], vexpect[i+1]);
 }
+
+TEST(Wordwrap, words) {
+    string content = makeContent("../test/wordwrap.txt");
+    ViewLogic vl(content.c_str(), content.length());
+    vl.screenLineLen = 10;
+    vl.screenLineCount = 20;
+    vl.wrapMode = 2;
+    vl.maxLineLen = 10000;
+    auto vexpect = makeExpect("../expect/wordwrap_first11ww10.txt");
+    auto vtest = vl.linesFromBeginScreen(0);
+    EXPECT_EQ(vexpect.size(), vtest.size());
+    for (int i=0; i<min(vtest.size(),vexpect.size()); i++)
+        EXPECT_EQ(vtest[i], vexpect[i]);
+}

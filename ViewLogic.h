@@ -6,6 +6,7 @@
 #define VIEWER_VIEWLOGIC_H
 
 #include "Lines.h"
+#include "utf/UTF.hpp"
 
 namespace vl {
 
@@ -53,6 +54,9 @@ namespace vl {
         bool isFirstChunkInside(int64_t offset);
         bool startInsideSegment(int64_t offset);
         std::vector<int> computeWrapLens(int64_t offset, int len);
+        uint codeClass(unsigned int c);
+        int clLastWidth(const dstring &dstr, int width, uint cl);
+        int clNextWidth(const char *s, const char *seol, uint cl);
     };
 
 } // vl

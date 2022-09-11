@@ -5,7 +5,6 @@
 #include <cassert>
 #include <cmath>
 #include "ViewLogic.h"
-#include "utf/UTF.hpp"
 
 using namespace std;
 
@@ -238,14 +237,28 @@ namespace vl {
         const char *s = addr + offset;
         const char *seol = s + len;
         const char *sprev = s;
+        dstring dstr(screenLineLen); //need buffer for wordWrap
         int width = 0;
         while (s < seol) {
             UTF utf;
             const char *end;
-            utf.one8to32(s, seol, &end);
+            dstr[width] = utf.one8to32(s, seol, &end);
             s = end;
             width++;
             if (width == screenLineLen) {
+                //------
+                if (wrapMode == 2) {
+                    uint cl = codeClass(dstr[width - 1]);
+                    if (cl > 0) {
+                        int countLast = clLastWidth(dstr, width, cl);
+                        int countNext = clNextWidth(s, seol, cl);
+                        if (countNext>0 && countLast+countNext<=screenLineLen) {
+                            s = utf.backNcodes(countLast, s, sprev);
+                            width -= countLast;
+                        }
+                    }
+                }
+                //------
                 screenLines.push_back(int(s - sprev));
                 width = 0;
                 sprev = s;
@@ -257,6 +270,47 @@ namespace vl {
         }
         assert(!screenLines.empty());
         return screenLines;
+    }
+
+    uint ViewLogic::codeClass(unsigned int c) {
+        if (isNewlineChar(char(c)))
+            return -1;
+        if (c==' ' || c=='\t')
+            return 0;
+        else if (c=='_' || c>='A' && c<='Z' || c>='a' && c<='z' || c>='0' && c<='9'
+                 || c>=0x80 && c<0x250)
+            return 1;
+        else if (c<128)
+            return 2;
+        else
+            return c & 0xffffff00;
+    }
+
+    int ViewLogic::clLastWidth(const dstring &dstr, int width, uint cl) {
+        int countLast = 0;
+        for (int k=width-1; k>=0; k--) {
+            if (codeClass(dstr[k]) == cl)
+                countLast++;
+            else
+                break;
+        }
+        return countLast;
+    }
+
+    int ViewLogic::clNextWidth(const char *s, const char *seol, uint cl) {
+        int countNext= 0;
+        const char *s1 = s;
+        UTF utf;
+        while (s1<seol && countNext < screenLineLen) {
+            const char *end;
+            uint d = utf.one8to32(s1, seol, &end);//no need here keep an eye on \t
+            s1 = end;
+            if (codeClass(d) != cl)
+                break;
+            countNext++;
+            s1++;
+        }
+        return countNext;
     }
 
 } // vl
