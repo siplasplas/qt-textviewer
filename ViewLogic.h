@@ -35,11 +35,11 @@ namespace vl {
 
     class ViewLogic {
         const char *addr;
-        int64_t fileSize;
         int BOMsize = 0;
         friend class LineOwner;
     public:
         ViewLogic(const char *addr, int64_t fileSize) : addr(addr), fileSize(fileSize) {}
+        const int64_t fileSize;
         int screenLineLen = 0;
         int screenLineCount = 0;
         int maxLineLen = 10000;
@@ -48,8 +48,8 @@ namespace vl {
         ViewResult linesFromBeginScreen(int64_t start);
         LineOwner getBeginPos(int64_t position);
         ViewResult lines(int64_t position);
-        bool scrollDown(ViewResult &vr);
-        bool scrollUp(ViewResult &vr);
+        int scrollDown(ViewResult &vr);
+        int scrollUp(ViewResult &vr);
         bool scrollPageDown(ViewResult &vr);
         bool scrollPageUp(ViewResult &vr);
     private:

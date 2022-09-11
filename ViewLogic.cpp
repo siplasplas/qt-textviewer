@@ -405,13 +405,15 @@ namespace vl {
     }
 
     //return actually scrolls done
-    bool ViewLogic::scrollDown(ViewResult &vr) {
-        if (vr.infos->empty()) return false;
+    int ViewLogic::scrollDown(ViewResult &vr) {
+        if (vr.infos->empty()) return 0;
         auto *lastLi = vr.infos->back();
+        assert(lastLi->next<=fileSize);
         if (vr.wrap) {
-            assert(vr.lastWrapIndex >= 0);
+            assert(vr.lastWrapIndex >= 0 && vr.lastWrapIndex < lastLi->wrapLens.size());
+            if (lastLi->next==fileSize && vr.lastWrapIndex == lastLi->wrapLens.size()) return 0;
             vr.lastWrapIndex++;
-            if (vr.lastWrapIndex >= lastLi->wrapLens.size()) {
+            if (vr.lastWrapIndex == lastLi->wrapLens.size()) {
                 vr.lastWrapIndex = 0;
                 auto *li = new LineInfo;
                 updateInfo(lastLi->next, li);
@@ -419,6 +421,7 @@ namespace vl {
                 vr.infos->erase(vr.infos->begin());
             }
         } else {
+            if (lastLi->next==fileSize) return 0;
             auto *li = new LineInfo;
             updateInfo(lastLi->next, li);
             vr.infos->push_back(li);
@@ -428,14 +431,16 @@ namespace vl {
         auto newLine = fillLine(newLi, vr.lastWrapIndex);
         vr.lines->push_back(newLine);
         vr.lines->erase(vr.lines->begin());
-        return true;
+        return 1;
     }
 
-    bool ViewLogic::scrollUp(ViewResult &vr) {
-        if (vr.infos->empty()) return false;
+    int ViewLogic::scrollUp(ViewResult &vr) {
+        if (vr.infos->empty()) return 0;
         auto *firstLi = vr.infos->at(0);
+        assert(firstLi->offset>=BOMsize);
         if (vr.wrap) {
             assert(vr.firstWrapIndex >= 0);
+            if (firstLi->offset==BOMsize && vr.firstWrapIndex==0) return 0;
             vr.firstWrapIndex--;
             if (vr.firstWrapIndex < 0) {
                 vr.firstWrapIndex = firstLi->wrapLens.size() - 1;
@@ -447,6 +452,7 @@ namespace vl {
             }
         } else {
             auto *li = new LineInfo;
+            if (firstLi->offset==BOMsize) return 0;
             int64_t linePos = gotoBeginLine(firstLi->offset-1);
             updateInfo(linePos, li);
             vr.infos->insert(vr.infos->begin(), li);
@@ -456,7 +462,7 @@ namespace vl {
         auto newLine = fillLine(newLi, vr.firstWrapIndex);
         vr.lines->insert(vr.lines->begin(), newLine);
         vr.lines->pop_back();
-        return true;
+        return 1;
     }
 
     bool ViewLogic::scrollPageDown(ViewResult &vr) {
