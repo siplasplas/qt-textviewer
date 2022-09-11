@@ -130,9 +130,18 @@ namespace vl {
 
     wstring ViewLogic::fillWithScreenLen(int64_t offset, int len) {
         UTF utf;
-        string str(addr+offset, len);
-        wstring wstr = utf.u8to16(str);
-        return wstr.substr(0,screenLineLen);
+        dstring dstr(screenLineLen);
+        const char *s = addr + offset;
+        const char *eol = addr + offset + len;
+        int k=0;
+        while (s<eol && k<screenLineLen) {
+            const char *end;
+            dstr[k] = utf.one8to32(s, eol, &end);
+            s = end;
+            k++;
+        }
+        dstr.resize(k);
+        return utf.u32to16(dstr);
     }
 
     int64_t ViewLogic::gotoBeginLine(int64_t offset) {
