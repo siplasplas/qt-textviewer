@@ -1,6 +1,8 @@
 # qt-textviewer
 Text viewer especially for huge files
 
+git clone --recurse-submodules https://github.com/siplasplas/qt-textviewer.git
+
 Twin panel file managers have built in file viewers. Total Commander for Windows and
 Double Commander for Linux have text viewer launched by key F3.
 Unlike editors, viewed file is not loaded whole to memory, instead only viewed pieces.
