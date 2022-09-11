@@ -18,6 +18,7 @@ namespace vl {
         std::wstring operator[](size_t index) {
             return lines->at(index).text;
         }
+        bool operator==( const ViewResult &src) const;
     };
 
     class ViewLogic {
@@ -31,6 +32,7 @@ namespace vl {
         int screenLineCount = 0;
         ViewResult linesFromBeginScreen(int64_t start);
         LineOwner getBeginPos(int64_t position);
+        ViewResult lines(int64_t position);
     private:
         ViewResult linesFromBeginScreen(const LineOwner& start);
         ViewResult infosFromBeginScreen(int64_t start);

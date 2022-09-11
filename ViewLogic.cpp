@@ -11,6 +11,18 @@ using namespace std;
 
 namespace vl {
 
+    bool ViewResult::operator==(const ViewResult &src) const {
+        if (infos && !src.infos) return false;
+        if (!infos && src.infos) return false;
+        if (infos->size() != src.infos->size()) return false;
+        for(int i=0; i<infos->size(); i++)
+            if (*infos->at(i) != *src.infos->at(i)) return false;
+        if (lines && !src.lines) return false;
+        if (!lines && src.lines) return false;
+        if (lines && *lines!=*src.lines) return false;
+        return true;
+    }
+
     ViewResult ViewLogic::infosFromBeginScreen(int64_t start) {
         ViewResult vr;
         vr.infos = new InfoVec;
@@ -160,6 +172,10 @@ namespace vl {
         LineOwner lineOwner(position, this);
         lineOwner.backNlines(backCount);
         return lineOwner;
+    }
+
+    ViewResult ViewLogic::lines(int64_t position) {
+        return linesFromBeginScreen(getBeginPos(position));
     }
 
 } // vl

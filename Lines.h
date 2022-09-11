@@ -15,6 +15,8 @@ namespace vl {
         int64_t offset;
         int len; //without endline char, can be zero
         int64_t next;
+        bool operator==(const LineInfo &src) const;
+        bool operator!=(const LineInfo &src) const;
     };
 
     struct Line {
@@ -23,6 +25,7 @@ namespace vl {
 
         Line(std::wstring text, const LineInfo *li) :
                 text(std::move(text)), li(li) {}
+        bool operator==(const Line &src) const;
     };
 
     using InfoVec = std::vector<LineInfo *>;

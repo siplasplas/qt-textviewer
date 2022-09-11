@@ -6,6 +6,23 @@
 
 namespace vl {
 
+    bool Line::operator==(const Line &src) const {
+        if (text!=src.text) return false;
+        if (*li!=*src.li) return false;
+        return true;
+    }
+
+    bool LineInfo::operator==(const LineInfo &src) const {
+        if (offset!=src.offset) return false;
+        if (len!=src.len) return false;
+        if (next!=src.next) return false;
+        return true;
+    }
+
+    bool LineInfo::operator!=(const LineInfo &src) const {
+        return !(*this==src);
+    }
+
     LineOwner::LineOwner(int64_t offset, ViewLogic *vl) : vl(vl) {
         int64_t linePos = vl->gotoBeginLine(offset);
         li = new LineInfo;

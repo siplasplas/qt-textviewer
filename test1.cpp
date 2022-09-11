@@ -34,3 +34,14 @@ TEST(Back, positions) {
         EXPECT_EQ(vl.getBeginPos(content.length()).li->offset, vexpect.lines->at(vexpect.size()-i).li->offset);
     }
 }
+
+TEST(Back, lines) {
+    string content = makeContent("../test/empties.txt");
+    ViewLogic vl(content.c_str(), content.length());
+    vl.screenLineLen = 8;
+    vl.screenLineCount = 50; //enough forall lines
+    auto vexpect = vl.linesFromBeginScreen(0);
+    vl.screenLineCount = vexpect.size();
+    auto vtest = vl.lines(content.length());
+    EXPECT_EQ(vtest, vexpect);
+}
