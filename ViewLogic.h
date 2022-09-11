@@ -34,12 +34,12 @@ namespace vl {
     };
 
     class ViewLogic {
-        const char *addr;
-        int BOMsize = 0;
         friend class LineOwner;
     public:
         ViewLogic(const char *addr, int64_t fileSize) : addr(addr), fileSize(fileSize) {}
+        const char * const addr;
         const int64_t fileSize;
+        const int BOMsize = 0;
         int screenLineLen = 0;
         int screenLineCount = 0;
         int maxLineLen = 10000;
