@@ -30,6 +30,7 @@ namespace vl {
         ViewLogic(const char *addr, int64_t fileSize) : addr(addr), fileSize(fileSize) {}
         int screenLineLen = 0;
         int screenLineCount = 0;
+        int maxLineLen = 10000;
         ViewResult linesFromBeginScreen(int64_t start);
         LineOwner getBeginPos(int64_t position);
         ViewResult lines(int64_t position);

@@ -66,9 +66,10 @@ namespace vl {
 
     int64_t ViewLogic::searchEndOfLine(int64_t startOffset) {
         int64_t offset = startOffset;
-        while ( offset<fileSize && !isNewlineChar(addr[offset]) )
+        int64_t possibleBreakAt = (offset/maxLineLen)*maxLineLen+maxLineLen;
+        while ( offset<fileSize && !isNewlineChar(addr[offset]) && offset < possibleBreakAt )
             offset++;
-        assert(offset==fileSize || isNewlineChar(addr[offset]));
+        assert(offset==fileSize || isNewlineChar(addr[offset]) || offset==possibleBreakAt );
         return offset;
     }
 
@@ -83,7 +84,6 @@ namespace vl {
         else if (isNewlineChar(c))
             return min(pos+1,fileSize-1);
         else {//MaxLine break
-            assert(pos==fileSize);
             return pos;
         }
     }
