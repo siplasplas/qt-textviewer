@@ -9,37 +9,39 @@
 #include <string>
 #include <vector>
 
-struct LineInfo {
-    int64_t offset;
-    int len; //without endline char, can be zero
-    int64_t next;
-};
+namespace vl {
 
-struct Line {
-    std::wstring text;
-    const LineInfo *li = nullptr;
+    struct LineInfo {
+        int64_t offset;
+        int len; //without endline char, can be zero
+        int64_t next;
+    };
 
-    Line(std::wstring text, const LineInfo *li):
-            text(std::move(text)), li(li) {}
-};
+    struct Line {
+        std::wstring text;
+        const LineInfo *li = nullptr;
 
-using InfoVec = std::vector<LineInfo*>;
-using LineVec = std::vector<Line>;
+        Line(std::wstring text, const LineInfo *li) :
+                text(std::move(text)), li(li) {}
+    };
 
-class ViewLogic;
+    using InfoVec = std::vector<LineInfo *>;
+    using LineVec = std::vector<Line>;
 
-struct LineOwner {
-    LineInfo *li = nullptr;
-    ViewLogic* vl;
-    LineOwner()= default;
-    LineOwner(int64_t offset, ViewLogic* vl);
-    ~LineOwner(){
-        delete li;
-    }
-};
+    class ViewLogic;
 
-LineOwner::LineOwner(int64_t offset, ViewLogic *vl): vl(vl) {
+    struct LineOwner {
+        LineInfo *li = nullptr;
+        ViewLogic *vl;
+
+        LineOwner() = default;
+
+        LineOwner(int64_t offset, ViewLogic *vl);
+
+        ~LineOwner() {
+            delete li;
+        }
+    };
 
 }
-
 #endif //VIEWER_LINES_H
