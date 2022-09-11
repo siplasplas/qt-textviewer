@@ -6,7 +6,7 @@
 #define VIEWER_VIEWLOGIC_H
 
 #include "Lines.h"
-#include "utf/UTF.hpp"
+#include "../utf/UTF.hpp"
 
 namespace vl {
 
