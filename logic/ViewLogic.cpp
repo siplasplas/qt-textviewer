@@ -73,10 +73,12 @@ namespace vl {
     }
 
     ViewResult ViewLogic::linesFromBeginScreen(const LineOwner& start) {
-        auto vr= infosFromBeginScreen(start.li->offset);
-        vr.firstWrapIndex = start.wrapIndex;
-        fillLines(vr);
-        return vr;
+        if (addr && fileSize>0) {
+            auto vr = infosFromBeginScreen(start.li->offset);
+            vr.firstWrapIndex = start.wrapIndex;
+            fillLines(vr);
+            return vr;
+        } else return {};
     }
 
     void ViewLogic::updateInfo(int64_t offset, LineInfo *li) {
