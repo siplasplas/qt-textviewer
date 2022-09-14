@@ -5,7 +5,9 @@
 #include <QPainter>
 #include <QFontDatabase>
 #include <cmath>
+#include <QElapsedTimer>
 #include "PaintArea.h"
+#include <QDebug>
 
 namespace wid {
     void PaintArea::paintEvent(QPaintEvent *event) {
@@ -38,6 +40,9 @@ namespace wid {
         vl->screenLineCount = ceil(event->size().height()/fontHeight);
         vl->screenLineLen = ceil(event->size().width()/fontWidth);
         vl->maxLineLen = 10000000;
+        QElapsedTimer timer;
+        timer.start();
         vr = vl->lines(vl->fileSize);
+        qDebug() << timer.nsecsElapsed()/1e6;
     }
 }
