@@ -5,6 +5,7 @@ project(textViewer)
 add_definitions("-Werror=return-type")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 
 set(CMAKE_AUTOMOC ON)
 

@@ -4,6 +4,7 @@
 
 #include <QPainter>
 #include <QFontDatabase>
+#include <cmath>
 #include "PaintArea.h"
 
 namespace wid {
@@ -23,17 +24,20 @@ namespace wid {
         QFont font = QFontDatabase::systemFont(QFontDatabase::FixedFont);
         font.setPointSizeF(10);
         QFontMetricsF fm(font, this);
-        qreal pixelsWide = fm.horizontalAdvance("0");
-        qreal pixelsHigh = fm.height();
+        fontWidth = fm.horizontalAdvance("0");
+        fontHeight = fm.height();
         this->setFont(font);
         vl = new vl::ViewLogic(addr, fileSize);
-        vl->screenLineCount = 20;
-        vl->screenLineLen = 40;
-        vl->maxLineLen = 10000000;
-        vr = vl->lines(0);
     }
 
     PaintArea::~PaintArea() {
         delete vl;
+    }
+
+    void PaintArea::resizeEvent(QResizeEvent *event) {
+        vl->screenLineCount = ceil(event->size().height()/fontHeight);
+        vl->screenLineLen = ceil(event->size().width()/fontWidth);
+        vl->maxLineLen = 10000000;
+        vr = vl->lines(vl->fileSize);
     }
 }

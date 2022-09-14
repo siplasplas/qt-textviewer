@@ -13,12 +13,12 @@ namespace wid {
     class PaintArea : public QWidget {
         vl::ViewLogic *vl;
         vl::ViewResult vr;
+        qreal fontWidth, fontHeight;
     protected:
         void paintEvent(QPaintEvent *event) override;
-
+        void resizeEvent(QResizeEvent *event) override;
     public:
         explicit PaintArea(const char *addr, int64_t fileSize, QWidget *parent);
-
         ~PaintArea() override;
     };
 }
