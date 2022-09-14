@@ -104,6 +104,9 @@ namespace vl {
     }
 
     int64_t ViewLogic::searchEndOfLine(int64_t startOffset) {
+        int len = cache.getLineLen(startOffset);
+        if (len)
+            return startOffset+len;
         int64_t offset = startOffset;
         int64_t possibleBreakAt = (offset/maxLineLen)*maxLineLen+maxLineLen;
         int64_t possibleBreakCorrected = correctPossibleBreak(possibleBreakAt);
@@ -117,6 +120,8 @@ namespace vl {
                 offset++;
         }
         assert(offset==fileSize || isNewlineChar(addr[offset])|| offset==possibleBreakCorrected);
+        if (offset-startOffset>=minLineToCache)
+            cache.put(startOffset, (int)(offset-startOffset));
         return offset;
     }
 
@@ -259,6 +264,9 @@ namespace vl {
     }
 
     int64_t ViewLogic::gotoBeginNonEmptyLine(int64_t start) {
+        int len = cache.getPrevLineLen(start);
+        if (len)
+            return start-len;
         assert(start<fileSize && !isNewlineChar(addr[start]));
         int64_t possibleBreakAt = (start/maxLineLen)*maxLineLen;
         int64_t possibleBreakCorrected = correctPossibleBreak(possibleBreakAt);
@@ -274,6 +282,8 @@ namespace vl {
             }
             offset--;
         }
+        if (start-offset>=minLineToCache)
+            cache.putPrev(start, (int)(start-offset));
         return offset;
     }
 

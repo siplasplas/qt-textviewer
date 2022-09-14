@@ -7,6 +7,7 @@
 
 #include "Lines.h"
 #include "../utf/UTF.hpp"
+#include "Cache.h"
 
 namespace vl {
 
@@ -43,7 +44,7 @@ namespace vl {
         const int BOMsize = 0;
         int screenLineLen = 0;
         int screenLineCount = 0;
-        int maxLineLen = 10000;
+        int maxLineLen = 1000000;
         int wrapMode = 0;
         int maxTabW = 1;
         ViewResult linesFromBeginScreen(int64_t start);
@@ -56,6 +57,8 @@ namespace vl {
         bool scrollPageDown(ViewResult &vr);
         bool scrollPageUp(ViewResult &vr);
     private:
+        Cache cache;
+        const int minLineToCache = 1000;
         ViewResult linesFromBeginScreen(const LineOwner& start);
         ViewResult infosFromBeginScreen(int64_t start);
         void fillLines(ViewResult &vr);
