@@ -39,10 +39,6 @@ namespace wid {
     void PaintArea::resizeEvent(QResizeEvent *event) {
         vl->screenLineCount = ceil(event->size().height()/fontHeight);
         vl->screenLineLen = ceil(event->size().width()/fontWidth);
-        vl->maxLineLen = 1000000;
-        QElapsedTimer timer;
-        timer.start();
         vr = vl->lines(vl->fileSize);
-        qDebug() << timer.nsecsElapsed()/1e6;
     }
 }

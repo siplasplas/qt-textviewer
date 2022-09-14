@@ -3,7 +3,6 @@
 //
 
 #include <cstdint>
-#include <QDebug>
 #include "Cache.h"
 
 int Cache::getLineLen(int64_t startpos) {
@@ -16,7 +15,6 @@ int Cache::getLineLen(int64_t startpos) {
 
 void Cache::put(int64_t startpos, int len) {
     len--;
-    qDebug() << "1:" << startpos << len;
     ma1[startpos] = len;
     ma2[startpos+len] = len;
 }
@@ -30,7 +28,6 @@ int Cache::getPrevLineLen(long startpos) {
 }
 
 void Cache::putPrev(int64_t startpos, int len) {
-    qDebug() << "2:" << startpos << len;
     ma2[startpos] = len;
     ma1[startpos-len] = len;
 }
