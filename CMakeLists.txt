@@ -53,4 +53,4 @@ add_executable(gtest_viewer ${LOGIC_SOURCES}
 
 target_link_libraries(gtest_viewer gtest gtest_main)
 
-add_executable(test test.cpp)
+add_executable(generateBig test.cpp)
