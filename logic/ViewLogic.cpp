@@ -68,11 +68,11 @@ namespace vl {
         return vr;
     }
 
-    ViewResult ViewLogic::linesFromBeginScreen(int64_t start) {
-        return linesFromBeginScreen(LineOwner(start, wrapMode>0, this));
+    ViewResult ViewLogic::linesFromBeginScreen(int64_t start, int beginX) {
+        return linesFromBeginScreen(LineOwner(start, wrapMode>0, this), beginX);
     }
 
-    ViewResult ViewLogic::linesFromBeginScreen(const LineOwner& start) {
+    ViewResult ViewLogic::linesFromBeginScreen(const LineOwner& start, int beginX) {
         if (addr && fileSize>0) {
             auto vr = infosFromBeginScreen(start.li->offset);
             vr.firstWrapIndex = start.wrapIndex;
@@ -305,13 +305,13 @@ namespace vl {
         return lineOwner;
     }
 
-    ViewResult ViewLogic::lines(int64_t position) {
-        return linesFromBeginScreen(getBeginPos(position));
+    ViewResult ViewLogic::lines(int64_t position, int beginX) {
+        return linesFromBeginScreen(getBeginPos(position), beginX);
     }
 
-    ViewResult ViewLogic::linesRel(double relative) {
+    ViewResult ViewLogic::linesRel(double relative, int beginX) {
         auto pos = int64_t(round((long double)relative * fileSize));
-        return linesFromBeginScreen(getBeginPos(pos));
+        return lines(pos, beginX);
     }
 
     bool ViewLogic::isFirstChunkStart(int64_t offset) {

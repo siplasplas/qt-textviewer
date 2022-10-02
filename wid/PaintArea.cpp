@@ -39,6 +39,6 @@ namespace wid {
     void PaintArea::resizeEvent(QResizeEvent *event) {
         vl->screenLineCount = ceil(event->size().height()/fontHeight);
         vl->screenLineLen = ceil(event->size().width()/fontWidth);
-        vr = vl->lines(vl->fileSize);
+        vr = vl->lines(vl->fileSize,0);
     }
 }

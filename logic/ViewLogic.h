@@ -47,10 +47,10 @@ namespace vl {
         int maxLineLen = 1000000;
         int wrapMode = 0;
         int maxTabW = 1;
-        ViewResult linesFromBeginScreen(int64_t start);
+        ViewResult linesFromBeginScreen(int64_t start, int beginX);
         LineOwner getBeginPos(int64_t position);
-        ViewResult lines(int64_t position);
-        ViewResult linesRel(double relative);
+        ViewResult lines(int64_t position, int beginX);
+        ViewResult linesRel(double relative, int beginX);
         int scrollDown(ViewResult &vr);
         int scrollUp(ViewResult &vr);
         bool scrollNDown(int n, ViewResult &vr);
@@ -60,7 +60,7 @@ namespace vl {
     private:
         Cache cache;
         const int minLineToCache = 1000;
-        ViewResult linesFromBeginScreen(const LineOwner& start);
+        ViewResult linesFromBeginScreen(const LineOwner& start, int beginX);
         ViewResult infosFromBeginScreen(int64_t start);
         void fillLines(ViewResult &vr);
         void updateInfo(int64_t offset, LineInfo* li);
