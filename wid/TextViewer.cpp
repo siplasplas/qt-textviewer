@@ -5,6 +5,7 @@
 #include <QFontDatabase>
 #include <QHBoxLayout>
 #include "utf/UTF.hpp"
+#include <QDebug>
 
 namespace wid {
     TextViewer::TextViewer(const char *addr, int64_t fileSize, QWidget *parent) :
@@ -22,6 +23,7 @@ namespace wid {
         vLayout->addLayout(hLayout);
         vLayout->addWidget(hscroll);
         setLayout(vLayout);
+        connect(hscroll, &QScrollBar::valueChanged, this, &TextViewer::hscrollChanged);
     }
 
 #if QT_CONFIG(wheelevent)
@@ -32,6 +34,10 @@ namespace wid {
             paintArea->wheelHorizontal(delta);
         else
             paintArea->wheelVertical(delta);
+    }
+
+    void TextViewer::hscrollChanged() {
+        qDebug() << hscroll->value();
     }
 
 #endif

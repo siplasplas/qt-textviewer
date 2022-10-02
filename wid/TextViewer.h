@@ -13,7 +13,6 @@ namespace wid {
         PaintArea *paintArea;
     public:
         explicit TextViewer(const char *addr, int64_t fileSize, QWidget *parent = nullptr);
-
     protected:
 //    void keyPressEvent(QKeyEvent *event) override;
 #if QT_CONFIG(wheelevent)
@@ -22,7 +21,8 @@ namespace wid {
 //    void mousePressEvent(QMouseEvent *event) override;
 //    void mouseMoveEvent(QMouseEvent *event) override;
 //    void mouseReleaseEvent(QMouseEvent *event) override;
-    private:
+private:
+      void hscrollChanged();
 //    void scroll(int deltaX, int deltaY);
     };
 
