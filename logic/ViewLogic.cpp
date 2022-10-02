@@ -539,10 +539,34 @@ namespace vl {
     }
 
     int ViewLogic::computeRawBeginX(int64_t startLine, int lineLen, int beginX) {
+        if (!beginX)
+            return 0;
         UTF utf;
         int actual;
-        const char* s = utf.forwardNcodes(addr+startLine, beginX, addr+startLine+lineLen, actual);
-        return s-(addr+startLine);
+        const char* s;
+
+        auto p = cacheX.getPrevAndDelta(startLine, beginX);
+        int prevX = p.first;
+        int delta = p.second;
+        if (delta>0) {
+            s = utf.forwardNcodes(addr+startLine+prevX, delta, addr+startLine+lineLen, actual);
+        } else if (delta<0) {
+            if (beginX<=-delta)
+                s = nullptr;
+            else
+                s = utf.backwardNcodes(addr+startLine+prevX, -delta, addr+startLine, actual);
+        }
+        else if(prevX)
+            return prevX;
+        else
+            s = nullptr;
+
+        if (!s) //standard
+            s = utf.forwardNcodes(addr+startLine, beginX, addr+startLine+lineLen, actual);
+
+        int rawBeginX = s-(addr+startLine);
+        cacheX.add(startLine, beginX, rawBeginX);
+        return rawBeginX;
     }
 
 } // vl
