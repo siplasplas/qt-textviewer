@@ -7,6 +7,7 @@
 
 #include <QWidget>
 #include <QPaintEvent>
+#include <QTimer>
 #include "logic/ViewLogic.h"
 
 namespace wid {
@@ -15,6 +16,10 @@ namespace wid {
         vl::ViewResult vr;
         int beginX = 0;
         qreal fontWidth, fontHeight;
+        QTimer timer;
+        bool drawCaret = true;
+        QPoint caretPos;
+        void doBlinkMethod();
     protected:
         void paintEvent(QPaintEvent *event) override;
         void resizeEvent(QResizeEvent *event) override;

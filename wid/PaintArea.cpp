@@ -16,6 +16,7 @@ namespace wid {
         QString pilcrow(1);
         pilcrow[0] = 182;
         QPen pen(Qt::black);
+        pen.setWidth(1);
         painter.setPen(pen);
         if (vr.lines)
             for (int i = 0; i < vr.lines->size(); i++) {
@@ -30,6 +31,14 @@ namespace wid {
                 } else
                     painter.drawText(R, Qt::AlignLeft, qstr);
             }
+        if (drawCaret && hasFocus()) {
+            QPen pen(Qt::black);
+            pen.setWidth(2);
+            painter.setPen(pen);
+            int x = (int)round(caretPos.x()*fontWidth+1);
+            int y = (int)round(caretPos.y()*fontHeight);
+            painter.drawLine(x, y, x, y+fontHeight);
+        }
     }
 
     PaintArea::PaintArea(const char *addr, int64_t fileSize, QWidget *parent) : QWidget(parent) {
@@ -40,6 +49,10 @@ namespace wid {
         fontHeight = fm.height();
         this->setFont(font);
         vl = new vl::ViewLogic(addr, fileSize);
+        connect(&timer, &QTimer::timeout, this, &PaintArea::doBlinkMethod);
+        timer.start(500);
+        caretPos.setX(0);
+        caretPos.setY(1);
     }
 
     PaintArea::~PaintArea() {
@@ -64,5 +77,13 @@ namespace wid {
         beginX = std::max(0, beginX-delta);
         vr = vl->lines(vl->fileSize, beginX);
         update();
+    }
+
+    void PaintArea::doBlinkMethod() {
+        drawCaret = !drawCaret;
+        //update();
+        int x = caretPos.x()*fontWidth;
+        int y = caretPos.y()*fontHeight;
+        repaint(x, y, x+2, y+fontHeight);
     }
 }

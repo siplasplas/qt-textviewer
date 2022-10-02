@@ -40,5 +40,9 @@ namespace wid {
         qDebug() << hscroll->value();
     }
 
+    void TextViewer::mousePressEvent(QMouseEvent *event) {
+        paintArea->setFocus();
+    }
+
 #endif
 }
