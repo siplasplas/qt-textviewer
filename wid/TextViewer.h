@@ -8,7 +8,6 @@
 namespace wid {
     class TextViewer : public QWidget {
     Q_OBJECT
-
         QScrollBar *vscroll;
         QScrollBar *hscroll;
         PaintArea *paintArea;
@@ -18,9 +17,7 @@ namespace wid {
     protected:
 //    void keyPressEvent(QKeyEvent *event) override;
 #if QT_CONFIG(wheelevent)
-
         void wheelEvent(QWheelEvent *event) override;
-
 #endif
 //    void mousePressEvent(QMouseEvent *event) override;
 //    void mouseMoveEvent(QMouseEvent *event) override;
