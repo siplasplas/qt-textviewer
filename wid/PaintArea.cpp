@@ -44,15 +44,15 @@ namespace wid {
             QPen pen(Qt::black);
             pen.setWidth(2);
             painter.setPen(pen);
-            int x = (int)round(caretPos.x()*fontWidth+1);
-            int y = (int)round(caretPos.y()*fontHeight);
+            int x = (int)(caretPos.x()*fontWidth+1);
+            int y = (int)(caretPos.y()*fontHeight);
             painter.drawLine(x, y, x, y+fontHeight);
         }
     }
 
     PaintArea::PaintArea(const char *addr, int64_t fileSize, QWidget *parent) : QWidget(parent) {
         QFont font = QFontDatabase::systemFont(QFontDatabase::FixedFont);
-        font.setPointSizeF(10);
+        font.setPointSizeF(10.5);
         QFontMetricsF fm(font, this);
         fontWidth = fm.horizontalAdvance("0");
         fontHeight = fm.height();
@@ -97,9 +97,9 @@ namespace wid {
 
     void PaintArea::mousePressEvent(QMouseEvent *event) {
         setFocus();
-        QPoint p = event->pos();
-        qDebug() << p;
+        trySetCaret(event->pos());
     }
+
 #if QT_CONFIG(wheelevent)
     void PaintArea::wheelEvent(QWheelEvent *event) {
         int delta = event->angleDelta().y() / 40;
@@ -108,5 +108,13 @@ namespace wid {
         else
             wheelVertical(delta);
     }
+
+    //set caret on char containing point or on row and end of line
+    void PaintArea::trySetCaret(QPoint point) {
+        caretPos.setX(int(point.x()/fontWidth));
+        caretPos.setY(int(point.y()/fontHeight));
+        update();
+    }
+
 #endif
 }

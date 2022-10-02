@@ -32,6 +32,7 @@ namespace wid {
         ~PaintArea() override;
         void wheelVertical(int delta);
         void wheelHorizontal(int delta);
+        void trySetCaret(QPoint point);
     };
 }
 
