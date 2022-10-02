@@ -367,8 +367,10 @@ namespace vl {
                         int countLast = clLastWidth(dstr, width, cl);
                         int countNext = clNextWidth(s, seol, cl);
                         if (countNext>0 && countLast+countNext<=screenLineLen) {
-                            s = utf.backNcodes(countLast, s, sprev);
-                            width -= countLast;
+                            int actual;
+                            s = utf.backwardNcodes(s, countLast, sprev, actual);
+                            assert(countLast==actual);
+                            width -= actual;
                         }
                     }
                 }
