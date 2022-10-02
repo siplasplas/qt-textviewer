@@ -22,7 +22,6 @@ namespace wid {
         vLayout->addLayout(hLayout);
         vLayout->addWidget(hscroll);
         setLayout(vLayout);
-        hscroll->setVisible(false);
     }
 
 #if QT_CONFIG(wheelevent)
