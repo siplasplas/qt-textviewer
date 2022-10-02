@@ -309,6 +309,11 @@ namespace vl {
         return linesFromBeginScreen(getBeginPos(position));
     }
 
+    ViewResult ViewLogic::linesRel(double relative) {
+        auto pos = int64_t(round((long double)relative * fileSize));
+        return linesFromBeginScreen(getBeginPos(pos));
+    }
+
     bool ViewLogic::isFirstChunkStart(int64_t offset) {
         return offset<=BOMsize || isNewlineChar(addr[offset-1]);
     }

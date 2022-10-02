@@ -50,6 +50,7 @@ namespace vl {
         ViewResult linesFromBeginScreen(int64_t start);
         LineOwner getBeginPos(int64_t position);
         ViewResult lines(int64_t position);
+        ViewResult linesRel(double relative);
         int scrollDown(ViewResult &vr);
         int scrollUp(ViewResult &vr);
         bool scrollNDown(int n, ViewResult &vr);
