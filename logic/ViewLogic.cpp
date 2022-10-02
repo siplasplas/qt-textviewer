@@ -76,6 +76,7 @@ namespace vl {
         if (addr && fileSize>0) {
             auto vr = infosFromBeginScreen(start.li->offset);
             vr.firstWrapIndex = start.wrapIndex;
+            vr.beginX = beginX;
             fillLines(vr);
             return vr;
         } else return {};
@@ -163,7 +164,9 @@ namespace vl {
                     vr.lastWrapIndex = 0;
             }
             else if (!wrapMode){
-                wstring wstr = fillWithScreenLen(li->offset, li->len);
+                int rawBeginX = computeRawBeginX(li->offset, li->len, vr.beginX);
+                assert(rawBeginX>=0 && rawBeginX<=li->len);
+                wstring wstr = fillWithScreenLen(li->offset+rawBeginX, li->len-rawBeginX);
                 vr.lines->emplace_back(Line(wstr, li, -1));
             } else {
                 assert(!li->wrapLens.empty());
@@ -533,6 +536,13 @@ namespace vl {
 
     bool ViewLogic::scrollPageUp(ViewResult &vr) {
         return scrollNUp(screenLineCount, vr);
+    }
+
+    int ViewLogic::computeRawBeginX(int64_t startLine, int lineLen, int beginX) {
+        UTF utf;
+        int actual;
+        const char* s = utf.forwardNcodes(addr+startLine, beginX, addr+startLine+lineLen, actual);
+        return s-(addr+startLine);
     }
 
 } // vl

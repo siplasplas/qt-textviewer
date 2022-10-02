@@ -16,6 +16,7 @@ namespace vl {
         LineVec* lines = nullptr;
         int firstWrapIndex = -1;
         int lastWrapIndex = -1;
+        int beginX = 0;
         bool wrap;
         size_t size() {
             return lines->size();
@@ -82,6 +83,7 @@ namespace vl {
         int64_t correctPossibleBreak(int64_t possibleBreakAt);
         Line fillLine(LineInfo *li, int wrapIndex);
         void fillLines_loop(ViewResult &vr);
+        int computeRawBeginX(int64_t startLine, int lineLen, int beginX);
     };
 
 } // vl
