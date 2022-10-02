@@ -100,4 +100,13 @@ namespace wid {
         QPoint p = event->pos();
         qDebug() << p;
     }
+#if QT_CONFIG(wheelevent)
+    void PaintArea::wheelEvent(QWheelEvent *event) {
+        int delta = event->angleDelta().y() / 40;
+        if (event->modifiers() == Qt::ShiftModifier)
+            wheelHorizontal(delta);
+        else
+            wheelVertical(delta);
+    }
+#endif
 }

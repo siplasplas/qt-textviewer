@@ -26,19 +26,7 @@ namespace wid {
         connect(hscroll, &QScrollBar::valueChanged, this, &TextViewer::hscrollChanged);
     }
 
-#if QT_CONFIG(wheelevent)
-
-    void TextViewer::wheelEvent(QWheelEvent *event) {
-        int delta = event->angleDelta().y() / 40;
-        if (event->modifiers() == Qt::ShiftModifier)
-            paintArea->wheelHorizontal(delta);
-        else
-            paintArea->wheelVertical(delta);
-    }
-
     void TextViewer::hscrollChanged() {
         qDebug() << hscroll->value();
     }
-
-#endif
 }

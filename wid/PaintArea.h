@@ -24,6 +24,9 @@ namespace wid {
         void paintEvent(QPaintEvent *event) override;
         void resizeEvent(QResizeEvent *event) override;
         void mousePressEvent(QMouseEvent *event) override;
+#if QT_CONFIG(wheelevent)
+        void wheelEvent(QWheelEvent *event) override;
+#endif
     public:
         explicit PaintArea(const char *addr, int64_t fileSize, QWidget *parent);
         ~PaintArea() override;

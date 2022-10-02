@@ -15,9 +15,6 @@ namespace wid {
         explicit TextViewer(const char *addr, int64_t fileSize, QWidget *parent = nullptr);
     protected:
 //    void keyPressEvent(QKeyEvent *event) override;
-#if QT_CONFIG(wheelevent)
-        void wheelEvent(QWheelEvent *event) override;
-#endif
 //    void mouseMoveEvent(QMouseEvent *event) override;
 //    void mouseReleaseEvent(QMouseEvent *event) override;
 private:
