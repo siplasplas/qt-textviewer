@@ -7,18 +7,28 @@
 #include <cmath>
 #include <QElapsedTimer>
 #include "PaintArea.h"
-#include <QDebug>
 
 namespace wid {
     void PaintArea::paintEvent(QPaintEvent *event) {
         QPainter painter(this);
         painter.setRenderHint(QPainter::TextAntialiasing);
         painter.fillRect(rect(), Qt::white);
+        QString pilcrow(1);
+        pilcrow[0] = 182;
+        QPen pen(Qt::black);
+        painter.setPen(pen);
         if (vr.lines)
             for (int i = 0; i < vr.lines->size(); i++) {
-                QRect R(0, i * 17, this->rect().width(), 17);
+                QRect R(0, i * fontHeight, this->rect().width(), fontHeight);
                 QString qstr = QString::fromWCharArray(vr[i].c_str());
-                painter.drawText(R, Qt::AlignLeft, qstr);
+                if (i == vr.lines->size()-1 && qstr.isEmpty()) {
+                    if (vr.lines->at(i).li->next==vl->fileSize) {
+                        QPen pen1(Qt::gray);
+                        painter.setPen(pen1);
+                        painter.drawText(R, Qt::AlignLeft, pilcrow);
+                    }
+                } else
+                    painter.drawText(R, Qt::AlignLeft, qstr);
             }
     }
 
@@ -37,8 +47,8 @@ namespace wid {
     }
 
     void PaintArea::resizeEvent(QResizeEvent *event) {
-        vl->screenLineCount = ceil(event->size().height()/fontHeight);
-        vl->screenLineLen = ceil(event->size().width()/fontWidth);
+        vl->screenLineCount = ceil((double)event->size().height()/fontHeight);
+        vl->screenLineLen = ceil((double)event->size().width()/fontWidth);
         vr = vl->lines(vl->fileSize, beginX);
     }
 
