@@ -47,10 +47,10 @@ namespace vl {
         int maxLineLen = 1000000;
         int wrapMode = 0;
         int maxTabW = 1;
-        ViewResult linesFromBeginScreen(int64_t start, int beginX);
+        ViewResult linesFromBeginScreen(int64_t start, int beginX=0);
         LineOwner getBeginPos(int64_t position);
-        ViewResult lines(int64_t position, int beginX);
-        ViewResult linesRel(double relative, int beginX);
+        ViewResult lines(int64_t position, int beginX=0);
+        ViewResult linesRel(double relative, int beginX=0);
         int scrollDown(ViewResult &vr);
         int scrollUp(ViewResult &vr);
         bool scrollNDown(int n, ViewResult &vr);
