@@ -13,23 +13,31 @@ namespace wid {
         QPainter painter(this);
         painter.setRenderHint(QPainter::TextAntialiasing);
         painter.fillRect(rect(), Qt::white);
+        bool oneCharRepaint = event->rect().width()==2;
         QString pilcrow(1);
         pilcrow[0] = 182;
         QPen pen(Qt::black);
         pen.setWidth(1);
         painter.setPen(pen);
         if (vr.lines)
-            for (int i = 0; i < vr.lines->size(); i++) {
-                QRect R(0, i * fontHeight, this->rect().width(), fontHeight);
-                QString qstr = QString::fromWCharArray(vr[i].c_str());
-                if (i == vr.lines->size()-1 && qstr.isEmpty()) {
-                    if (vr.lines->at(i).li->next==vl->fileSize) {
-                        QPen pen1(Qt::gray);
-                        painter.setPen(pen1);
-                        painter.drawText(R, Qt::AlignLeft, pilcrow);
-                    }
-                } else
-                    painter.drawText(R, Qt::AlignLeft, qstr);
+            if (oneCharRepaint) {
+                QRect R(event->rect());
+                QString qstr = QString::fromWCharArray(vr[caretPos.y()].c_str());
+                QChar qchar = qstr[caretPos.x()];
+                painter.drawText(R, Qt::AlignLeft, qchar);
+            } else {
+                for (int i = 0; i < vr.lines->size(); i++) {
+                    QRect R(0, i * fontHeight, this->rect().width(), fontHeight);
+                    QString qstr = QString::fromWCharArray(vr[i].c_str());
+                    if (i == vr.lines->size() - 1 && qstr.isEmpty()) {
+                        if (vr.lines->at(i).li->next == vl->fileSize) {
+                            QPen pen1(Qt::gray);
+                            painter.setPen(pen1);
+                            painter.drawText(R, Qt::AlignLeft, pilcrow);
+                        }
+                    } else
+                        painter.drawText(R, Qt::AlignLeft, qstr);
+                }
             }
         if (drawCaret && hasFocus()) {
             QPen pen(Qt::black);
@@ -81,9 +89,8 @@ namespace wid {
 
     void PaintArea::doBlinkMethod() {
         drawCaret = !drawCaret;
-        //update();
         int x = caretPos.x()*fontWidth;
         int y = caretPos.y()*fontHeight;
-        repaint(x, y, x+2, y+fontHeight);
+        repaint(x, y, 2, fontHeight);
     }
 }
