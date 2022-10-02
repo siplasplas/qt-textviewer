@@ -27,6 +27,11 @@ namespace wid {
 #if QT_CONFIG(wheelevent)
 
     void TextViewer::wheelEvent(QWheelEvent *event) {
+        int delta = event->angleDelta().y() / 40;
+        if (event->modifiers() == Qt::ShiftModifier)
+            paintArea->wheelHorizontal(delta);
+        else
+            paintArea->wheelVertical(delta);
     }
 
 #endif

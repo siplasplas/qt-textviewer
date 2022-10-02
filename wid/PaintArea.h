@@ -13,6 +13,7 @@ namespace wid {
     class PaintArea : public QWidget {
         vl::ViewLogic *vl;
         vl::ViewResult vr;
+        int beginX = 0;
         qreal fontWidth, fontHeight;
     protected:
         void paintEvent(QPaintEvent *event) override;
@@ -20,6 +21,8 @@ namespace wid {
     public:
         explicit PaintArea(const char *addr, int64_t fileSize, QWidget *parent);
         ~PaintArea() override;
+        void wheelVertical(int delta);
+        void wheelHorizontal(int delta);
     };
 }
 

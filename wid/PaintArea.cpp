@@ -39,6 +39,20 @@ namespace wid {
     void PaintArea::resizeEvent(QResizeEvent *event) {
         vl->screenLineCount = ceil(event->size().height()/fontHeight);
         vl->screenLineLen = ceil(event->size().width()/fontWidth);
-        vr = vl->lines(vl->fileSize,0);
+        vr = vl->lines(vl->fileSize, beginX);
+    }
+
+    void PaintArea::wheelVertical(int delta) {
+        if (delta>0)
+            vl->scrollNUp(delta, vr);
+        else if (delta<0)
+            vl->scrollNDown(-delta, vr);
+        update();
+    }
+
+    void PaintArea::wheelHorizontal(int delta) {
+        beginX = std::max(0, beginX-delta);
+        vr = vl->lines(vl->fileSize, beginX);
+        update();
     }
 }
