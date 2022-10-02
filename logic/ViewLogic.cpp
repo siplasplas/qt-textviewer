@@ -565,7 +565,8 @@ namespace vl {
             s = utf.forwardNcodes(addr+startLine, beginX, addr+startLine+lineLen, actual);
 
         int rawBeginX = s-(addr+startLine);
-        cacheX.add(startLine, beginX, rawBeginX);
+        if (lineLen>=minLineToCacheX)
+            cacheX.add(startLine, beginX, rawBeginX);
         return rawBeginX;
     }
 
