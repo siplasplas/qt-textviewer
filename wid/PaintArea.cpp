@@ -6,6 +6,7 @@
 #include <QFontDatabase>
 #include <cmath>
 #include <QElapsedTimer>
+#include <QDebug>
 #include "PaintArea.h"
 
 namespace wid {
@@ -92,5 +93,11 @@ namespace wid {
         int x = caretPos.x()*fontWidth;
         int y = caretPos.y()*fontHeight;
         repaint(x, y, 2, fontHeight);
+    }
+
+    void PaintArea::mousePressEvent(QMouseEvent *event) {
+        setFocus();
+        QPoint p = event->pos();
+        qDebug() << p;
     }
 }
