@@ -69,17 +69,16 @@ namespace vl {
     }
 
     ViewResult ViewLogic::linesFromBeginScreen(int64_t start, int beginX) {
-        return linesFromBeginScreen(LineOwner(start, wrapMode>0, this), beginX);
+        return linesFromBeginScreenOwner(new LineOwner(start, wrapMode>0, this), beginX);
     }
 
-    ViewResult ViewLogic::linesFromBeginScreen(const LineOwner& start, int beginX) {
-        if (addr && fileSize>0) {
-            auto vr = infosFromBeginScreen(start.li->offset);
-            vr.firstWrapIndex = start.wrapIndex;
-            vr.beginX = beginX;
-            fillLines(vr);
-            return vr;
-        } else return {};
+    ViewResult ViewLogic::linesFromBeginScreenOwner(const LineOwner* start, int beginX) {
+        auto vr = infosFromBeginScreen(start->li->offset);
+        vr.firstWrapIndex = start->wrapIndex;
+        vr.beginX = beginX;
+        fillLines(vr);
+        vr.start = start;
+        return vr;
     }
 
     void ViewLogic::updateInfo(int64_t offset, LineInfo *li) {
@@ -290,26 +289,26 @@ namespace vl {
         return offset;
     }
 
-    LineOwner ViewLogic::getBeginPos(int64_t position) {
+    LineOwner* ViewLogic::getBeginPos(int64_t position) {
         assert(maxLineLen>=UTF::MAXCHARLEN);
         assert(fileSize>=0);
         if (!fileSize) return {};
         position = min(position, fileSize);
         assert(screenLineCount>=0);
         assert(position<=fileSize);
-        if (!screenLineCount) return {position, wrapMode>0,this};
+        auto lineOwner = new LineOwner(position, wrapMode > 0, this);
+        if (!screenLineCount) return lineOwner;
         int backCount;
         if (position<fileSize) {
             backCount = ceill((long double)(position-BOMsize) / (fileSize-BOMsize) * (screenLineCount-1));
         } else
             backCount = ceill((long double)(position-BOMsize) / (fileSize-BOMsize) * screenLineCount);
-        LineOwner lineOwner(position,wrapMode>0, this);
-        lineOwner.backNlines(backCount);
+        lineOwner->backNlines(backCount);
         return lineOwner;
     }
 
     ViewResult ViewLogic::lines(int64_t position, int beginX) {
-        return linesFromBeginScreen(getBeginPos(position), beginX);
+        return linesFromBeginScreenOwner(getBeginPos(position), beginX);
     }
 
     ViewResult ViewLogic::linesRel(double relative, int beginX) {

@@ -28,10 +28,10 @@ TEST(Back, positions) {
     vl.screenLineCount = 50; //enough for all lines
     auto vexpect = vl.linesFromBeginScreen(0);
     vl.screenLineCount = 0;
-    EXPECT_EQ(vl.getBeginPos(content.length()).li->offset, content.length());
+    EXPECT_EQ(vl.getBeginPos(content.length())->li->offset, content.length());
     for (int i=1; i<vexpect.size(); i++) {
         vl.screenLineCount = i;
-        EXPECT_EQ(vl.getBeginPos(content.length()).li->offset, vexpect.lines->at(vexpect.size()-i).li->offset);
+        EXPECT_EQ(vl.getBeginPos(content.length())->li->offset, vexpect.lines->at(vexpect.size()-i).li->offset);
     }
 }
 

@@ -41,28 +41,6 @@ namespace vl {
         }
     }
 
-    void LineOwner::clone(const LineOwner &src) {
-        if (li)
-            delete li;
-        li = new LineInfo;
-        wrapIndex = src.wrapIndex;
-        wrap = src.wrap;
-        *li = *src.li;
-        vl = src.vl;
-    }
-
-    LineOwner::LineOwner(const LineOwner &src) {
-        clone(src);
-    }
-
-    LineOwner &LineOwner::operator=( const LineOwner &src) {
-        if(this == &src){
-            return *this;
-        }
-        clone(src);
-        return *this;
-    }
-
     void LineOwner::backNlines(int n) {
         for (int i=0; i<n; i++)
             backLine();

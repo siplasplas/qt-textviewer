@@ -30,11 +30,13 @@ namespace vl {
         ~ViewResult() {
             delete infos;
             delete lines;
+            delete start;
         }
         ViewResult( const ViewResult& );
         ViewResult &operator=( const ViewResult &src);
         bool operator==( const ViewResult &src) const;
         void clone(const ViewResult &src);
+        const LineOwner *start = nullptr;
     };
 
     class ViewLogic {
@@ -51,7 +53,8 @@ namespace vl {
         int maxTabW = 1;
         int minLineToCacheX = 200;
         ViewResult linesFromBeginScreen(int64_t start, int beginX=0);
-        LineOwner getBeginPos(int64_t position);
+        ViewResult linesFromBeginScreenOwner(const LineOwner* start, int beginX);
+        LineOwner* getBeginPos(int64_t position);
         ViewResult lines(int64_t position, int beginX=0);
         ViewResult linesRel(double relative, int beginX=0);
         int scrollDown(ViewResult &vr);
@@ -64,7 +67,6 @@ namespace vl {
         Cache cache;
         CacheX cacheX;
         const int minLineToCache = 1000;
-        ViewResult linesFromBeginScreen(const LineOwner& start, int beginX);
         ViewResult infosFromBeginScreen(int64_t start);
         void fillLines(ViewResult &vr);
         void updateInfo(int64_t offset, LineInfo* li);
