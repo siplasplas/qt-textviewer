@@ -13,8 +13,9 @@ namespace wid {
     void PaintArea::paintEvent(QPaintEvent *event) {
         QPainter painter(this);
         painter.setRenderHint(QPainter::TextAntialiasing);
-        painter.fillRect(rect(), Qt::white);
-        bool oneCharRepaint = event->rect().width()==2;
+        QRect R = event->rect();
+        bool oneCharRepaint = R.width()==ceil(fontWidth);
+        painter.fillRect(R, Qt::white);
         QString pilcrow(1);
         pilcrow[0] = 182;
         QPen pen(Qt::black);
@@ -46,7 +47,7 @@ namespace wid {
             painter.setPen(pen);
             int x = (int)(caretPos.x()*fontWidth+1);
             int y = (int)(caretPos.y()*fontHeight);
-            painter.drawLine(x, y, x, y+fontHeight);
+            painter.drawLine(x, y+1, x, y+fontHeight-1);
         }
     }
 
@@ -71,7 +72,7 @@ namespace wid {
     void PaintArea::resizeEvent(QResizeEvent *event) {
         vl->screenLineCount = ceil((double)event->size().height()/fontHeight);
         vl->screenLineLen = ceil((double)event->size().width()/fontWidth);
-        vr = vl->lines(vl->fileSize, beginX);
+        vr = vl->lines();
     }
 
     void PaintArea::wheelVertical(int delta) {
@@ -84,7 +85,8 @@ namespace wid {
 
     void PaintArea::wheelHorizontal(int delta) {
         beginX = std::max(0, beginX-delta);
-        vr = vl->lines(vl->fileSize, beginX);
+        vl->lo->beginX = beginX;
+        vr = vl->lines();
         update();
     }
 
@@ -92,7 +94,7 @@ namespace wid {
         drawCaret = !drawCaret;
         int x = caretPos.x()*fontWidth;
         int y = caretPos.y()*fontHeight;
-        repaint(x, y, 2, fontHeight);
+        repaint(x, y, ceil(fontWidth), ceil(fontHeight));
     }
 
     void PaintArea::mousePressEvent(QMouseEvent *event) {
