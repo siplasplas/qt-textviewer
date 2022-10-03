@@ -41,7 +41,7 @@ namespace vl {
         int wrapIndex = -1;
         bool wrap;
         int64_t position = 0;
-        int beginX;
+        int beginX = 0;
         ViewLogic *vl = nullptr;
         void initLi(int64_t offset, bool wrap);
         ~LineOwner() {
