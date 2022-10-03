@@ -21,11 +21,16 @@ namespace wid {
         QPen pen(Qt::black);
         pen.setWidth(1);
         painter.setPen(pen);
-        if (vr.lines)
+        if (vr.lines) {
+            QString qstr = QString::fromWCharArray(vr[caretPos.y()].c_str());
+            QChar qchar;
+            if (qstr.length() <= caretPos.x()) {
+                caretPos.setX(qstr.length());
+                qchar = ' ';
+            } else qchar = qstr[caretPos.x()];
+
             if (oneCharRepaint) {
                 QRect R(event->rect());
-                QString qstr = QString::fromWCharArray(vr[caretPos.y()].c_str());
-                QChar qchar = qstr[caretPos.x()];
                 painter.drawText(R, Qt::AlignLeft, qchar);
             } else {
                 for (int i = 0; i < vr.lines->size(); i++) {
@@ -41,6 +46,7 @@ namespace wid {
                         painter.drawText(R, Qt::AlignLeft, qstr);
                 }
             }
+        }
         if (drawCaret && hasFocus()) {
             QPen pen(Qt::black);
             pen.setWidth(2);
@@ -60,9 +66,6 @@ namespace wid {
         this->setFont(font);
         vl = new vl::ViewLogic(addr, fileSize);
         connect(&timer, &QTimer::timeout, this, &PaintArea::doBlinkMethod);
-        timer.start(500);
-        caretPos.setX(0);
-        caretPos.setY(1);
     }
 
     PaintArea::~PaintArea() {
@@ -115,6 +118,7 @@ namespace wid {
     void PaintArea::trySetCaret(QPoint point) {
         caretPos.setX(int(point.x()/fontWidth));
         caretPos.setY(int(point.y()/fontHeight));
+        timer.start(500);
         update();
     }
 
