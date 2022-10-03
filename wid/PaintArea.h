@@ -33,6 +33,7 @@ namespace wid {
         void wheelVertical(int delta);
         void wheelHorizontal(int delta);
         void trySetCaret(QPoint point);
+        void setHorizontal(int beginX);
     };
 }
 

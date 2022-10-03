@@ -27,6 +27,6 @@ namespace wid {
     }
 
     void TextViewer::hscrollChanged() {
-        qDebug() << hscroll->value();
+        paintArea->setHorizontal(hscroll->value());
     }
 }

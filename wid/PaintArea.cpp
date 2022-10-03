@@ -86,6 +86,12 @@ namespace wid {
         update();
     }
 
+    void PaintArea::setHorizontal(int beginX) {
+        vl->lo->beginX = beginX;
+        vr = vl->lines();
+        update();
+    }
+
     void PaintArea::wheelHorizontal(int delta) {
         beginX = std::max(0, beginX-delta);
         vl->lo->beginX = beginX;

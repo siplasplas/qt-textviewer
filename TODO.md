@@ -1,0 +1,3 @@
+- vertical scrollbar
+- mouse selection
+- copy to clipboard
