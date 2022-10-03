@@ -18,7 +18,9 @@ namespace wid {
 //    void mouseMoveEvent(QMouseEvent *event) override;
 //    void mouseReleaseEvent(QMouseEvent *event) override;
     private:
-      void hscrollChanged();
+        int64_t fileSize;
+        void hscrollChanged();
+        void vscrollChanged();
 //    void scroll(int deltaX, int deltaY);
     };
 

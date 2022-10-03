@@ -10,6 +10,7 @@
 namespace wid {
     TextViewer::TextViewer(const char *addr, int64_t fileSize, QWidget *parent) :
             QWidget(parent) {
+        this->fileSize = fileSize;
         setWindowTitle(tr("Viewer"));
         paintArea = new PaintArea(addr, fileSize, this);
         paintArea->setCursor(Qt::IBeamCursor);
@@ -24,9 +25,16 @@ namespace wid {
         vLayout->addWidget(hscroll);
         setLayout(vLayout);
         connect(hscroll, &QScrollBar::valueChanged, this, &TextViewer::hscrollChanged);
+        connect(vscroll, &QScrollBar::valueChanged, this, &TextViewer::vscrollChanged);
     }
 
     void TextViewer::hscrollChanged() {
         paintArea->setHorizontal(hscroll->value());
+    }
+
+    void TextViewer::vscrollChanged() {
+        long double relative = (long double)(vscroll->value())/vscroll->maximum();
+        int64_t position = int64_t(relative*fileSize);
+        paintArea->setVertical(position);
     }
 }
