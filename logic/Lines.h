@@ -38,7 +38,7 @@ namespace vl {
     class LineOwner {
         ViewLogic *vl = nullptr;
         int64_t position = 0;
-        bool wrap;
+        bool wrap = false;
         int backCount = 0;
     public:
         explicit LineOwner(ViewLogic *vl);
