@@ -36,20 +36,20 @@ namespace vl {
     class ViewLogic;
 
     struct LineOwner {
+        LineOwner(ViewLogic *vl);
         LineInfo *li = nullptr;
         int wrapIndex = -1;
         bool wrap;
-        ViewLogic *vl;
-        LineOwner() = default;
-        LineOwner(int64_t offset, bool wrap, ViewLogic* vl);
+        int64_t position = 0;
+        int beginX;
+        ViewLogic *vl = nullptr;
+        void initLi(int64_t offset, bool wrap);
         ~LineOwner() {
             delete li;
         }
+        void update();
         void backNlines(int n);
         void backLine();
-        LineOwner(const LineOwner &src);
-        LineOwner &operator=( const LineOwner &src);
-        void clone(const LineOwner &src);
         int getWrapIndex(int64_t offset);
     };
 

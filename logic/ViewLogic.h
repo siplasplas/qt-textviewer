@@ -42,7 +42,10 @@ namespace vl {
     class ViewLogic {
         friend class LineOwner;
     public:
-        ViewLogic(const char *addr, int64_t fileSize) : addr(addr), fileSize(fileSize) {}
+        ViewLogic(const char *addr, int64_t fileSize) : addr(addr), fileSize(fileSize) {
+            lo = new LineOwner(this);
+        }
+        ~ViewLogic() {delete lo;}
         const char * const addr;
         const int64_t fileSize;
         const int BOMsize = 0;
@@ -52,11 +55,8 @@ namespace vl {
         int wrapMode = 0;
         int maxTabW = 1;
         int minLineToCacheX = 200;
-        ViewResult linesFromBeginScreen(int64_t start, int beginX=0);
-        ViewResult linesFromBeginScreenOwner(const LineOwner* start, int beginX);
-        LineOwner* getBeginPos(int64_t position);
-        ViewResult lines(int64_t position, int beginX=0);
-        ViewResult linesRel(double relative, int beginX=0);
+        LineOwner* lo = nullptr;
+        ViewResult lines();
         int scrollDown(ViewResult &vr);
         int scrollUp(ViewResult &vr);
         bool scrollNDown(int n, ViewResult &vr);

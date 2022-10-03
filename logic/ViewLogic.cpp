@@ -68,16 +68,12 @@ namespace vl {
         return vr;
     }
 
-    ViewResult ViewLogic::linesFromBeginScreen(int64_t start, int beginX) {
-        return linesFromBeginScreenOwner(new LineOwner(start, wrapMode>0, this), beginX);
-    }
-
-    ViewResult ViewLogic::linesFromBeginScreenOwner(const LineOwner* start, int beginX) {
-        auto vr = infosFromBeginScreen(start->li->offset);
-        vr.firstWrapIndex = start->wrapIndex;
-        vr.beginX = beginX;
+    ViewResult ViewLogic::lines() {
+        lo->update();
+        auto vr = infosFromBeginScreen(lo->li->offset);
+        vr.firstWrapIndex = lo->wrapIndex;
+        vr.beginX = lo->beginX;
         fillLines(vr);
-        vr.start = start;
         return vr;
     }
 
@@ -289,32 +285,9 @@ namespace vl {
         return offset;
     }
 
-    LineOwner* ViewLogic::getBeginPos(int64_t position) {
-        assert(maxLineLen>=UTF::MAXCHARLEN);
-        assert(fileSize>=0);
-        if (!fileSize) return {};
-        position = min(position, fileSize);
-        assert(screenLineCount>=0);
-        assert(position<=fileSize);
-        auto lineOwner = new LineOwner(position, wrapMode > 0, this);
-        if (!screenLineCount) return lineOwner;
-        int backCount;
-        if (position<fileSize) {
-            backCount = ceill((long double)(position-BOMsize) / (fileSize-BOMsize) * (screenLineCount-1));
-        } else
-            backCount = ceill((long double)(position-BOMsize) / (fileSize-BOMsize) * screenLineCount);
-        lineOwner->backNlines(backCount);
-        return lineOwner;
-    }
-
-    ViewResult ViewLogic::lines(int64_t position, int beginX) {
-        return linesFromBeginScreenOwner(getBeginPos(position), beginX);
-    }
-
-    ViewResult ViewLogic::linesRel(double relative, int beginX) {
-        auto pos = int64_t(round((long double)relative * fileSize));
-        return lines(pos, beginX);
-    }
+//    ViewResult ViewLogic::lines(int64_t position, int beginX) {
+//        return lines(getBeginPos(position), beginX);
+//    }
 
     bool ViewLogic::isFirstChunkStart(int64_t offset) {
         return offset<=BOMsize || isNewlineChar(addr[offset-1]);

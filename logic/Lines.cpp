@@ -2,6 +2,7 @@
 // Created by Andrzej Borucki on 2022-09-11
 //
 #include <cassert>
+#include <cmath>
 #include "Lines.h"
 #include "ViewLogic.h"
 
@@ -31,8 +32,11 @@ namespace vl {
         return woffset;
     }
 
-    LineOwner::LineOwner(int64_t offset, bool wrap, ViewLogic* vl) : vl(vl), wrap(wrap) {
+    LineOwner::LineOwner(ViewLogic* vl) : vl(vl) {}
+
+    void LineOwner::initLi(int64_t offset, bool wrap) {
         int64_t linePos = vl->gotoBeginLine(offset);
+        delete li;
         li = new LineInfo;
         vl->updateInfo(linePos, li);
         if (wrap) {
@@ -74,6 +78,23 @@ namespace vl {
             }
         }
         return resultIndex;
+    }
+
+    void LineOwner::update() {
+        assert(vl->maxLineLen>=UTF::MAXCHARLEN);
+        assert(vl->fileSize>=0);
+        if (!vl->fileSize) return;
+        position = std::min(position, vl->fileSize);
+        assert(vl->screenLineCount>=0);
+        assert(position<=vl->fileSize);
+        initLi(position, vl->wrapMode > 0);
+        if (!vl->screenLineCount) return;
+        int backCount;
+        if (position<vl->fileSize) {
+            backCount = ceill((long double)(position-vl->BOMsize) / (vl->fileSize-vl->BOMsize) * (vl->screenLineCount-1));
+        } else
+            backCount = ceill((long double)(position-vl->BOMsize) / (vl->fileSize-vl->BOMsize) * vl->screenLineCount);
+        backNlines(backCount);
     }
 
 }
