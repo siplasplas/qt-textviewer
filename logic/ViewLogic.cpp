@@ -442,6 +442,7 @@ namespace vl {
         vr.lines->push_back(newLine);
         vr.lines->erase(vr.lines->begin());
         vr.firstWrapIndex = vr.lines->at(0).wrapIndex;
+        lo->gotoFromBegin(vr.lines->at(0).li->offset, lo->beginX);
         return 1;
     }
 
@@ -475,6 +476,7 @@ namespace vl {
         vr.lines->insert(vr.lines->begin(), newLine);
         vr.lines->pop_back();
         vr.lastWrapIndex = vr.lines->back().wrapIndex;
+        lo->gotoFromBegin(vr.lines->at(0).li->offset, lo->beginX);
         return 1;
     }
 

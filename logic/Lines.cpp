@@ -81,20 +81,31 @@ namespace vl {
     }
 
     void LineOwner::update() {
+        initLi(position, vl->wrapMode > 0);
+        backNlines(backCount);
+    }
+
+    void LineOwner::gotoFromBegin(int64_t position, int beginX) {
+        this->position = std::min(position, vl->fileSize);
+        this->beginX = beginX;
+        backCount = 0;
+    }
+
+    void LineOwner::gotoProportional(int64_t position, int beginX) {
+        this->beginX = beginX;
         assert(vl->maxLineLen>=UTF::MAXCHARLEN);
         assert(vl->fileSize>=0);
-        if (!vl->fileSize) return;
-        position = std::min(position, vl->fileSize);
+        this->position = std::min(position, vl->fileSize);
         assert(vl->screenLineCount>=0);
-        assert(position<=vl->fileSize);
-        initLi(position, vl->wrapMode > 0);
-        if (!vl->screenLineCount) return;
-        int backCount;
-        if (position<vl->fileSize) {
-            backCount = ceill((long double)(position-vl->BOMsize) / (vl->fileSize-vl->BOMsize) * (vl->screenLineCount-1));
-        } else
-            backCount = ceill((long double)(position-vl->BOMsize) / (vl->fileSize-vl->BOMsize) * vl->screenLineCount);
-        backNlines(backCount);
+        assert(this->position<=vl->fileSize);
+        if (vl->fileSize>0 && vl->screenLineCount>0) {
+            if (position < vl->fileSize) {
+                backCount = ceill((long double) (position - vl->BOMsize) / (vl->fileSize - vl->BOMsize) *
+                                  (vl->screenLineCount - 1));
+            } else
+                backCount = ceill(
+                        (long double) (position - vl->BOMsize) / (vl->fileSize - vl->BOMsize) * vl->screenLineCount);
+        } else backCount = 0;
     }
 
 }

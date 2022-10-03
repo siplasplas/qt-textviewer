@@ -35,14 +35,18 @@ namespace vl {
 
     class ViewLogic;
 
-    struct LineOwner {
-        LineOwner(ViewLogic *vl);
+    class LineOwner {
+        ViewLogic *vl = nullptr;
+        int64_t position = 0;
+        bool wrap;
+        int backCount = 0;
+    public:
+        explicit LineOwner(ViewLogic *vl);
+        int beginX = 0;
         LineInfo *li = nullptr;
         int wrapIndex = -1;
-        bool wrap;
-        int64_t position = 0;
-        int beginX = 0;
-        ViewLogic *vl = nullptr;
+        void gotoProportional(int64_t position, int beginX);
+        void gotoFromBegin(int64_t position, int beginX);
         void initLi(int64_t offset, bool wrap);
         ~LineOwner() {
             delete li;
