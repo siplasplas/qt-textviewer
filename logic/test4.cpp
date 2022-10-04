@@ -17,7 +17,8 @@ TEST(Scroll, width) {
     vl.screenLineCount = 3;
     vl.wrapMode = 0;
 
-    auto vtest = vl.lines(0);
+    vl.lo->gotoFromBegin(0);
+    auto vtest = vl.lines();
     auto orig = vtest;
     EXPECT_EQ(vtest, orig);
     vl.scrollDown(vtest);
@@ -35,7 +36,8 @@ TEST(Scroll, wrap) {
     vl.screenLineCount = 3;
     vl.wrapMode = 1;
 
-    auto vtest = vl.lines(0);
+    vl.lo->gotoFromBegin(0);
+    auto vtest = vl.lines();
     auto orig = vtest;
     EXPECT_EQ(vtest, orig);
     vl.scrollDown(vtest);

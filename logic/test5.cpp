@@ -16,7 +16,8 @@ TEST(beginX, UnicodeX10) {
     vl.wrapMode = 0;
     vl.maxLineLen = 1000;
     auto vexpect = makeExpect("../expect/utf8_first10w10X10.txt");
-    auto vtest = vl.linesFromBeginScreen(0, 10);
+    vl.lo->gotoFromBegin(0, 10);
+    auto vtest = vl.lines();
     EXPECT_EQ(vexpect.size(), vtest.size());
     for (int i=0; i<min(vtest.size(),vexpect.size()); i++)
         EXPECT_EQ(vtest[i], vexpect[i]);
@@ -30,7 +31,8 @@ TEST(beginX, UnicodeX12) {
     vl.wrapMode = 0;
     vl.maxLineLen = 1000;
     auto vexpect = makeExpect("../expect/utf8_first10w10X12.txt");
-    auto vtest = vl.linesFromBeginScreen(0, 12);
+    vl.lo->gotoFromBegin(0,12);
+    auto vtest = vl.lines();
     EXPECT_EQ(vexpect.size(), vtest.size());
     for (int i=0; i<min(vtest.size(),vexpect.size()); i++)
         EXPECT_EQ(vtest[i], vexpect[i]);
@@ -44,7 +46,8 @@ TEST(beginX, UnicodeX40) {
     vl.wrapMode = 0;
     vl.maxLineLen = 1000;
     auto vexpect = makeExpect("../expect/utf8_first10w10X40.txt");
-    auto vtest = vl.linesFromBeginScreen(0, 40);
+    vl.lo->gotoFromBegin(0,40);
+    auto vtest = vl.lines();
     EXPECT_EQ(vexpect.size(), vtest.size());
     for (int i=0; i<min(vtest.size(),vexpect.size()); i++)
         EXPECT_EQ(vtest[i], vexpect[i]);
@@ -63,42 +66,50 @@ TEST(beginX, cache) {
     auto vexpect12 = makeExpect("../expect/utf8_first10w10X12.txt");
     auto vexpect40 = makeExpect("../expect/utf8_first10w10X40.txt");
 
-    auto vtest = vl.linesFromBeginScreen(0, 0);
+    vl.lo->gotoFromBegin(0,0);
+    auto vtest = vl.lines();
     EXPECT_EQ(vexpect0.size(), vtest.size());
     for (int i=0; i<min(vtest.size(),vexpect0.size()); i++)
         EXPECT_EQ(vtest[i], vexpect0[i]);
 
-    vtest = vl.linesFromBeginScreen(0, 10);
+    vl.lo->gotoFromBegin(0,10);
+    vtest = vl.lines();
     EXPECT_EQ(vexpect10.size(), vtest.size());
     for (int i=0; i<min(vtest.size(),vexpect10.size()); i++)
         EXPECT_EQ(vtest[i], vexpect10[i]);
 
-    vtest = vl.linesFromBeginScreen(0, 12);
+    vl.lo->gotoFromBegin(0,12);
+    vtest = vl.lines();
     EXPECT_EQ(vexpect12.size(), vtest.size());
     for (int i=0; i<min(vtest.size(),vexpect12.size()); i++)
         EXPECT_EQ(vtest[i], vexpect12[i]);
     //only from cache
-    vtest = vl.linesFromBeginScreen(0, 12);
+    vl.lo->gotoFromBegin(0,12);
+    vtest = vl.lines();
     EXPECT_EQ(vexpect12.size(), vtest.size());
     for (int i=0; i<min(vtest.size(),vexpect12.size()); i++)
         EXPECT_EQ(vtest[i], vexpect12[i]);
 
-    vtest = vl.linesFromBeginScreen(0, 40);
+    vl.lo->gotoFromBegin(0,40);
+    vtest = vl.lines();
     EXPECT_EQ(vexpect40.size(), vtest.size());
     for (int i=0; i<min(vtest.size(),vexpect40.size()); i++)
         EXPECT_EQ(vtest[i], vexpect40[i]);
 
-    vtest = vl.linesFromBeginScreen(0, 12);
+    vl.lo->gotoFromBegin(0,12);
+    vtest = vl.lines();
     EXPECT_EQ(vexpect12.size(), vtest.size());
     for (int i=0; i<min(vtest.size(),vexpect12.size()); i++)
         EXPECT_EQ(vtest[i], vexpect12[i]);
 
-    vtest = vl.linesFromBeginScreen(0, 10);
+    vl.lo->gotoFromBegin(0,10);
+    vtest = vl.lines();
     EXPECT_EQ(vexpect10.size(), vtest.size());
     for (int i=0; i<min(vtest.size(),vexpect10.size()); i++)
         EXPECT_EQ(vtest[i], vexpect10[i]);
 
-    vtest = vl.linesFromBeginScreen(0, 0);
+    vl.lo->gotoFromBegin(0,0);
+    vtest = vl.lines();
     EXPECT_EQ(vexpect0.size(), vtest.size());
     for (int i=0; i<min(vtest.size(),vexpect0.size()); i++)
         EXPECT_EQ(vtest[i], vexpect0[i]);

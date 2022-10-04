@@ -17,7 +17,8 @@ TEST(Unicode, width) {
     vl.wrapMode = 0;
     vl.maxLineLen = 1000;
     auto vexpect = makeExpect("../expect/utf8_first10w10.txt");
-    auto vtest = vl.linesFromBeginScreen(0);
+    vl.lo->gotoFromBegin(0);
+    auto vtest = vl.lines();
     EXPECT_EQ(vexpect.size(), vtest.size());
     for (int i=0; i<min(vtest.size(),vexpect.size()); i++)
         EXPECT_EQ(vtest[i], vexpect[i]);
@@ -31,7 +32,9 @@ TEST(Unicode, wrap) {
     vl.wrapMode = 1;
     vl.maxLineLen = 1000;
     auto vexpect = makeExpect("../expect/utf8_first20wrap10.txt");
-    auto vtest = vl.linesFromBeginScreen(0);
+    vl.lo->gotoFromBegin(0);
+    vl.lo->gotoFromBegin(0);
+    auto vtest = vl.lines();
     EXPECT_EQ(vexpect.size(), vtest.size());
     for (int i=0; i<min(vtest.size(),vexpect.size()); i++)
         EXPECT_EQ(vtest[i], vexpect[i]);
@@ -45,7 +48,8 @@ TEST(Unicode, maxline) {
     vl.wrapMode = 0;
     vl.maxLineLen = 10;
     auto vexpect = makeExpect("../expect/utf8_first40m10.txt");
-    auto vtest = vl.linesFromBeginScreen(0);
+    vl.lo->gotoFromBegin(0);
+    auto vtest = vl.lines();
     EXPECT_EQ(vexpect.size(), vtest.size());
     for (int i=0; i<min(vtest.size(),vexpect.size()); i++)
         EXPECT_EQ(vtest[i], vexpect[i]);
@@ -60,7 +64,8 @@ TEST(Tabs, nowrap) {
     vl.maxLineLen = 10000;
     vl.maxTabW = 4;
     auto vexpect = makeExpect("../expect/tabs.txt");
-    auto vtest = vl.linesFromBeginScreen(0);
+    vl.lo->gotoFromBegin(0);
+    auto vtest = vl.lines();
     EXPECT_EQ(vexpect.size(), vtest.size());
     for (int i=0; i<min(vtest.size(),vexpect.size()); i++)
         EXPECT_EQ(vtest[i], vexpect[i]);
@@ -75,7 +80,8 @@ TEST(Tabs, wrap) {
     vl.maxLineLen = 10000;
     vl.maxTabW = 4;
     auto vexpect = makeExpect("../expect/tabs.wrap.txt");
-    auto vtest = vl.linesFromBeginScreen(0);
+    vl.lo->gotoFromBegin(0);
+    auto vtest = vl.lines();
     EXPECT_EQ(vexpect.size(), vtest.size());
     for (int i=0; i<min(vtest.size(),vexpect.size()); i++)
         EXPECT_EQ(vtest[i], vexpect[i]);
@@ -90,7 +96,8 @@ TEST(Tabs, wordwrap) {
     vl.maxLineLen = 10000;
     vl.maxTabW = 4;
     auto vexpect = makeExpect("../expect/tabs.wordwrap.txt");
-    auto vtest = vl.linesFromBeginScreen(0);
+    vl.lo->gotoFromBegin(0);
+    auto vtest = vl.lines();
     EXPECT_EQ(vexpect.size(), vtest.size());
     for (int i=0; i<min(vtest.size(),vexpect.size()); i++)
         EXPECT_EQ(vtest[i], vexpect[i]);

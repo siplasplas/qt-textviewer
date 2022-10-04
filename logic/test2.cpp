@@ -17,7 +17,8 @@ TEST (Wrap, forward) {
     vl.maxLineLen = 1000;
     vl.wrapMode = 1;
     auto vexpect = makeExpect("../expect/midlines_first20wrap10.txt");
-    auto vtest = vl.linesFromBeginScreen(0);
+    vl.lo->gotoFromBegin(0);
+    auto vtest = vl.lines();
     EXPECT_GT(vexpect.size(), 0);
     EXPECT_EQ(vexpect.size(), vtest.size());
     for (int i=0; i<min(vtest.size(),vexpect.size()); i++)
@@ -30,9 +31,11 @@ TEST(Wrap, backward_short) {
     vl.screenLineLen = 7;
     vl.screenLineCount = 20;
     vl.wrapMode = 1;
-    auto vexpect = vl.linesFromBeginScreen(0);
+    vl.lo->gotoFromBegin(0);
+    auto vexpect = vl.lines();
     vl.screenLineCount = vexpect.size()-1;
-    auto vtest = vl.lines(content.length());
+    vl.lo->gotoProportional(content.length());
+    auto vtest = vl.lines();
     EXPECT_EQ(vexpect.size()-1, vtest.size());
     for (int i=0; i<min(vtest.size(),vexpect.size()-1); i++)
         EXPECT_EQ(vtest[i], vexpect[i+1]);
@@ -44,9 +47,11 @@ TEST(Wrap, backward_short_empt) {
     vl.screenLineLen = 7;
     vl.screenLineCount = 20;
     vl.wrapMode = 1;
-    auto vexpect = vl.linesFromBeginScreen(0);
+    vl.lo->gotoFromBegin(0);
+    auto vexpect = vl.lines();
     vl.screenLineCount = vexpect.size()-1;
-    auto vtest = vl.lines(content.length());
+    vl.lo->gotoProportional(content.length());
+    auto vtest = vl.lines();
     EXPECT_EQ(vexpect.size()-1, vtest.size());
     for (int i=0; i<min(vtest.size(),vexpect.size()-1); i++)
         EXPECT_EQ(vtest[i], vexpect[i+1]);
@@ -59,9 +64,11 @@ TEST(Wrap, backward_mid) {
     vl.screenLineCount = 20;
     vl.maxLineLen = 1000;
     vl.wrapMode = 1;
-    auto vexpect = vl.linesFromBeginScreen(0);
+    vl.lo->gotoFromBegin(0);
+    auto vexpect = vl.lines();
     vl.screenLineCount = vexpect.size()-1;
-    auto vtest = vl.lines(content.length());
+    vl.lo->gotoProportional(content.length());
+    auto vtest = vl.lines();
     EXPECT_EQ(vexpect.size()-1, vtest.size());
     for (int i=0; i<min(vtest.size(),vexpect.size()-1); i++)
         EXPECT_EQ(vtest[i], vexpect[i+1]);
@@ -73,9 +80,11 @@ TEST(Wrap, backward_short_any) {
     vl.screenLineLen = 7;
     vl.screenLineCount = 20;
     vl.wrapMode = 1;
-    auto vexpect = vl.linesFromBeginScreen(0);
+    vl.lo->gotoFromBegin(0);
+    auto vexpect = vl.lines();
     vl.screenLineCount = vexpect.size()-2;
-    auto vtest = vl.lines(28);
+    vl.lo->gotoProportional(28);
+    auto vtest = vl.lines();
     EXPECT_EQ(vexpect.size()-2, vtest.size());
     for (int i=0; i<min(vtest.size(),vexpect.size()-1); i++)
         EXPECT_EQ(vtest[i], vexpect[i+1]);
@@ -89,7 +98,8 @@ TEST(Wordwrap, words) {
     vl.wrapMode = 2;
     vl.maxLineLen = 10000;
     auto vexpect = makeExpect("../expect/wordwrap_first11ww10.txt");
-    auto vtest = vl.linesFromBeginScreen(0);
+    vl.lo->gotoFromBegin(0);
+    auto vtest = vl.lines();
     EXPECT_EQ(vexpect.size(), vtest.size());
     for (int i=0; i<min(vtest.size(),vexpect.size()); i++)
         EXPECT_EQ(vtest[i], vexpect[i]);
