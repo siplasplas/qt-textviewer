@@ -19,14 +19,14 @@ namespace vl {
         int lastWrapIndex = -1;
         int beginX = 0;
         bool wrap;
+        ViewLogic *vl;
         size_t size() {
             return lines->size();
         }
         std::wstring operator[](size_t index) {
             return lines->at(index).text;
         }
-        explicit ViewResult(bool wrap): wrap(wrap) {}
-        ViewResult(): ViewResult(false) {}
+        ViewResult(ViewLogic *vl, bool wrap): vl(vl), wrap(wrap) {}
         ~ViewResult() {
             delete infos;
             delete lines;
@@ -37,6 +37,7 @@ namespace vl {
         bool operator==( const ViewResult &src) const;
         void clone(const ViewResult &src);
         const LineOwner *start = nullptr;
+        int64_t filePosition(int row, int col);
     };
 
     class ViewLogic {

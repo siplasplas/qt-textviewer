@@ -4,6 +4,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <cstdio>
 #include "ViewLogic.h"
 
 using namespace std;
@@ -55,8 +56,31 @@ namespace vl {
         return true;
     }
 
+    int64_t ViewResult::filePosition(int row, int col) {
+        if (wrap) {
+            Line l = lines->at(row);
+            const LineInfo *li = l.li;
+            int actual;
+            UTF utf;
+            int64_t woffs = li->wrapOffset(l.wrapIndex);
+            int64_t wend = l.wrapIndex<li->wrapLens.size()-1?woffs+li->wrapLens[l.wrapIndex]:li->offset+li->len;
+            int64_t ret = utf.forwardNcodes(vl->addr+woffs, col,
+                                            vl->addr+wend, actual)-vl->addr;
+            return ret;
+        }
+        else {
+            col += beginX;
+            LineInfo *li = infos->at(row);
+            int actual;
+            UTF utf;
+            //below end sentinel does the trick of col >= len(line)
+            return utf.forwardNcodes(vl->addr+li->offset, col,
+                                     vl->addr+li->offset+li->len, actual)-vl->addr;
+        }
+    }
+
     ViewResult ViewLogic::infosFromBeginScreen(int64_t start) {
-        ViewResult vr(wrapMode>0);
+        ViewResult vr(this, wrapMode>0);
         vr.infos = new InfoVec;
         int64_t pos = start;
         while (pos<fileSize && vr.infos->size()<screenLineCount) {

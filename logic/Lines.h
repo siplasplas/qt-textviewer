@@ -16,7 +16,7 @@ namespace vl {
         int len; //without endline char, can be zero
         int64_t next;
         std::vector<int> wrapLens;
-        int64_t wrapOffset(int wrapIndex);
+        int64_t wrapOffset(int wrapIndex) const;
         bool operator==(const LineInfo &src) const;
         bool operator!=(const LineInfo &src) const;
     };
@@ -52,8 +52,8 @@ namespace vl {
             delete li;
         }
         void update();
-        void backNlines(int n);
-        void backLine();
+        void backNlines(int n, int64_t linePos);
+        void backLine(int64_t &linePos);
         int getWrapIndex(int64_t offset);
     };
 

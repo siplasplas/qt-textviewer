@@ -25,7 +25,7 @@ namespace vl {
         return !(*this==src);
     }
 
-    int64_t LineInfo::wrapOffset(int wrapIndex) {
+    int64_t LineInfo::wrapOffset(int wrapIndex) const {
         int64_t woffset = offset;
         for (int i=0; i<wrapIndex; i++)
             woffset += wrapLens[i];
@@ -46,23 +46,25 @@ namespace vl {
         }
     }
 
-    void LineOwner::backNlines(int n) {
-        for (int i=0; i<n; i++)
-            backLine();
+    void LineOwner::backNlines(int n, int64_t linePos) {
+        for (int i=0; i<n; i++) {
+            backLine(linePos);
+            if (linePos<=vl->BOMsize) break;
+        }
     }
 
-    void LineOwner::backLine() {
+    void LineOwner::backLine(int64_t &linePos) {
         if (wrap) {
             wrapIndex--;
             if (wrapIndex<0) {
-                int64_t linePos = vl->gotoBeginLine(li->offset-1);
+                linePos = vl->gotoBeginLine(li->offset-1);
                 vl->updateInfo(linePos, li);
                 assert(!li->wrapLens.empty() || !li->len);
                 wrapIndex = (int)li->wrapLens.size()-1;
             }
         }
         else {
-            int64_t linePos = vl->gotoBeginLine(li->offset-1);
+            linePos = vl->gotoBeginLine(li->offset-1);
             vl->updateInfo(linePos, li);
         }
     }
@@ -83,7 +85,7 @@ namespace vl {
 
     void LineOwner::update() {
         initLi(position, vl->wrapMode > 0);
-        backNlines(backCount);
+        backNlines(backCount,position);
     }
 
     void LineOwner::gotoFromBegin(int64_t position, int beginX) {

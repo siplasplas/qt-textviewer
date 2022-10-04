@@ -49,7 +49,7 @@ endif()
 
 add_executable(gtest_viewer ${LOGIC_SOURCES}
         logic/test1.cpp logic/test2.cpp logic/test3.cpp
-        logic/test4.cpp logic/test5.cpp)
+        logic/test4.cpp logic/test5.cpp logic/test6.cpp)
 
 target_link_libraries(gtest_viewer gtest gtest_main)
 
