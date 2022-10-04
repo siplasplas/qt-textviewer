@@ -24,6 +24,7 @@ namespace vl {
 
     void ViewResult::clone( const ViewResult &src) {
         wrap = src.wrap;
+        vl = src.vl;
         firstWrapIndex = src.firstWrapIndex;
         lastWrapIndex = src.lastWrapIndex;
         if (src.infos) {
