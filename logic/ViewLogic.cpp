@@ -69,7 +69,6 @@ namespace vl {
     }
 
     ViewResult ViewLogic::lines() {
-        lo->update();
         auto vr = infosFromBeginScreen(lo->li->offset);
         vr.firstWrapIndex = lo->wrapIndex;
         vr.beginX = lo->beginX;

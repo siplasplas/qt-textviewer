@@ -35,6 +35,7 @@ namespace vl {
     LineOwner::LineOwner(ViewLogic* vl) : vl(vl) {}
 
     void LineOwner::initLi(int64_t offset, bool wrap) {
+        this->wrap = wrap;
         int64_t linePos = vl->gotoBeginLine(offset);
         delete li;
         li = new LineInfo;
@@ -89,6 +90,7 @@ namespace vl {
         this->position = std::min(position, vl->fileSize);
         this->beginX = beginX;
         backCount = 0;
+        update();
     }
 
     void LineOwner::gotoProportional(int64_t position, int beginX) {
@@ -106,6 +108,7 @@ namespace vl {
                 backCount = ceill(
                         (long double) (position - vl->BOMsize) / (vl->fileSize - vl->BOMsize) * vl->screenLineCount);
         } else backCount = 0;
+        update();
     }
 
 }
