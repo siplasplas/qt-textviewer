@@ -13,7 +13,7 @@ Dialog::Dialog()
 {
     QVBoxLayout *mainLayout = new QVBoxLayout;
     //vmap.openFile("../wid/PaintArea.cpp");
-    vmap.openFile("/home/andrzej/testy/bigfile.dat");
+    vmap.openFile("../test/selection.txt");
     auto *widget = new wid::TextViewer(vmap.getAddr(), vmap.getFileSize(), this);
     QHBoxLayout *hLayout = new QHBoxLayout;
     hLayout->addWidget(new QLineEdit);
