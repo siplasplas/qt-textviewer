@@ -173,7 +173,8 @@ TEST(filePosition, wrap2) {
                     EXPECT_EQ(dstr[col], expectChar);
                 } else {
                     int64_t prevFilePosition = vtest.filePosition(row, dlen-1);
-                    EXPECT_EQ(filePosition, prevFilePosition+utf.one8len(dstr[dlen-1]));
+                    if (dlen>0)
+                        EXPECT_EQ(filePosition, prevFilePosition+utf.one8len(dstr[dlen-1]));
                 }
             }
         }
