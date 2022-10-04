@@ -26,7 +26,7 @@ namespace vl {
         std::wstring operator[](size_t index) {
             return lines->at(index).text;
         }
-        ViewResult(ViewLogic *vl, bool wrap): vl(vl), wrap(wrap) {}
+        ViewResult() = default;
         ~ViewResult() {
             delete infos;
             delete lines;

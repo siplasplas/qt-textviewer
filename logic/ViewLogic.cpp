@@ -80,7 +80,9 @@ namespace vl {
     }
 
     ViewResult ViewLogic::infosFromBeginScreen(int64_t start) {
-        ViewResult vr(this, wrapMode>0);
+        ViewResult vr;
+        vr.vl = this;
+        vr.wrap = wrapMode>0;
         vr.infos = new InfoVec;
         int64_t pos = start;
         while (pos<fileSize && vr.infos->size()<screenLineCount) {
