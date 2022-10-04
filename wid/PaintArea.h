@@ -9,6 +9,7 @@
 #include <QPaintEvent>
 #include <QTimer>
 #include "logic/ViewLogic.h"
+#include "Selection.h"
 
 namespace wid {
     class PaintArea : public QWidget {
@@ -18,6 +19,7 @@ namespace wid {
         qreal fontWidth, fontHeight;
         QTimer timer;
         bool drawCaret = true;
+        Selection selection;
         QPoint caretPos;
         void doBlinkMethod();
     protected:

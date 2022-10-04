@@ -15,7 +15,6 @@ namespace wid {
         painter.setRenderHint(QPainter::TextAntialiasing);
         QRect R = event->rect();
         bool oneCharRepaint = R.width()==ceil(fontWidth);
-        painter.fillRect(R, Qt::white);
         QString pilcrow(1);
         pilcrow[0] = 182;
         QPen pen(Qt::black);
@@ -29,10 +28,16 @@ namespace wid {
                 qchar = ' ';
             } else qchar = qstr[caretPos.x()];
 
+            QColor selColor(0xa6,0xd2,0xff);
+
             if (oneCharRepaint) {
-                QRect R(event->rect());
+                if (selection.charSelected(caretPos, vr))
+                    painter.fillRect(R, selColor);
+                else
+                    painter.fillRect(R, Qt::white);
                 painter.drawText(R, Qt::AlignLeft, qchar);
             } else {
+                painter.fillRect(R, Qt::white);
                 for (int i = 0; i < vr.lines->size(); i++) {
                     QRect R(0, i * fontHeight, this->rect().width(), fontHeight);
                     QString qstr = QString::fromWCharArray(vr[i].c_str());
@@ -58,6 +63,8 @@ namespace wid {
     }
 
     PaintArea::PaintArea(const char *addr, int64_t fileSize, QWidget *parent) : QWidget(parent) {
+        selection.selBegin = 0x31;
+        selection.selEnd = 0x79;
         QFont font = QFontDatabase::systemFont(QFontDatabase::FixedFont);
         font.setPointSizeF(10.5);
         QFontMetricsF fm(font, this);

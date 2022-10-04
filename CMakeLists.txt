@@ -25,7 +25,8 @@ set(PROJECT_SOURCES
         dialog.cpp dialog.h
         wid/TextViewer.cpp wid/TextViewer.h wid/PaintArea.cpp wid/PaintArea.h
         FileMap.h FileMap.cpp
-        ${LOGIC_SOURCES} )
+        ${LOGIC_SOURCES}
+        wid/Selection.cpp wid/Selection.h)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(${PROJECT_NAME}
