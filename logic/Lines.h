@@ -45,8 +45,8 @@ namespace vl {
         int beginX = 0;
         LineInfo *li = nullptr;
         int wrapIndex = -1;
-        void gotoProportional(int64_t position, int beginX);
-        void gotoFromBegin(int64_t position, int beginX);
+        void gotoProportional(int64_t position, int beginX=0);
+        void gotoFromBegin(int64_t position, int beginX=0);
         void initLi(int64_t offset, bool wrap);
         ~LineOwner() {
             delete li;
