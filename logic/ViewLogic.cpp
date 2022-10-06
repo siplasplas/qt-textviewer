@@ -80,6 +80,71 @@ namespace vl {
         }
     }
 
+    pair<int, int> ViewResult::locatePosition(int64_t filePosition) {
+        pair<int, int> p;
+        if (wrap)
+            p = locatePositionWrap(filePosition);
+        else
+            p = locatePositionNoWrap(filePosition);
+        p.second  = max(0, p.second-beginX);
+        return p;
+    }
+
+    pair<int, int> ViewResult::locatePositionNoWrap(int64_t filePosition) const {
+        size_t idxL = 0;
+        size_t idxR = infos->size();
+        size_t idxMid;
+        while (idxR - idxL >= 1)
+        {
+            idxMid = idxL + (idxR - idxL) / 2;
+            const LineInfo* midLi = infos->at(idxMid);
+            if (midLi->offset+midLi->len < filePosition) idxL = idxMid + 1;
+            else idxR = idxMid;
+        }
+        assert(idxL == idxR);
+        pair<int, int> p;
+        p.first = idxL;
+        UTF utf;
+        LineInfo* li = infos->at(idxL);
+        p.second = utf.numCodesBetween(vl->addr+li->offset, vl->addr+filePosition);
+        return p;
+    }
+
+    pair<int, int> ViewResult::locatePositionWrap(int64_t filePosition) const {
+        assert(!infos->empty());
+        int64_t wrapOffset=0;
+        pair<int, int> p;
+        p.first = locatePositionLoop(filePosition, wrapOffset);
+        UTF utf;
+        p.second = utf.numCodesBetween(vl->addr + wrapOffset, vl->addr + filePosition);
+        return p;
+    }
+
+    int ViewResult::locatePositionLoop(int64_t filePosition, int64_t &wrapOffset) const {
+        int row = 0;
+        int wrapLen = 0;
+        for (int k=0; k < infos->size(); k++) {
+            LineInfo* li = infos->at(k);
+            if (li->offset>filePosition) {//quirk when filePosition points to \n after line
+                wrapOffset -= wrapLen;//last value of previous loop
+                return row - 1;
+            }
+            wrapOffset = li->offset;
+            assert(firstWrapIndex >= 0);
+            int start = k==0 ? firstWrapIndex : 0;
+            for (int i=0; i<start; i++)
+                wrapOffset += li->wrapLens[i];
+            for (int i=start; i<li->wrapLens.size(); i++) {
+                wrapLen = li->wrapLens[i];
+                if (wrapOffset+wrapLen > filePosition) return row;
+                wrapOffset += wrapLen;
+                row++;
+            }
+        }
+        wrapOffset -= wrapLen; //if no break
+        return row-1;
+    }
+
     ViewResult ViewLogic::infosFromBeginScreen(int64_t start) {
         ViewResult vr;
         vr.vl = this;

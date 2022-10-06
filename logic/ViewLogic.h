@@ -30,14 +30,17 @@ namespace vl {
         ~ViewResult() {
             delete infos;
             delete lines;
-            delete start;
         }
         ViewResult( const ViewResult& );
         ViewResult &operator=( const ViewResult &src);
         bool operator==( const ViewResult &src) const;
         void clone(const ViewResult &src);
-        const LineOwner *start = nullptr;
         int64_t filePosition(int row, int col);
+        std::pair<int,int> locatePosition(int64_t filePosition);
+    private:
+        std::pair<int,int> locatePositionWrap(int64_t filePosition) const;
+        std::pair<int,int> locatePositionNoWrap(int64_t filePosition) const;
+        int locatePositionLoop(int64_t filePosition, int64_t &wrapOffset) const;
     };
 
     class ViewLogic {
@@ -64,6 +67,7 @@ namespace vl {
         bool scrollNUp(int n, ViewResult &vr);
         bool scrollPageDown(ViewResult &vr);
         bool scrollPageUp(ViewResult &vr);
+        static bool isNewlineChar(const char c);
     private:
         Cache cache;
         CacheX cacheX;
@@ -71,7 +75,6 @@ namespace vl {
         ViewResult infosFromBeginScreen(int64_t start);
         void fillLines(ViewResult &vr);
         void updateInfo(int64_t offset, LineInfo* li);
-        bool isNewlineChar(const char c);
         int64_t searchEndOfLine(int64_t startOffset);
         int64_t skipLineBreak(int64_t pos);
         std::wstring fillWithScreenLen(int64_t offset, int len);

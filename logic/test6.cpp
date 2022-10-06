@@ -26,8 +26,14 @@ TEST(filePosition, whole) {
             int dlen = dstr.size();
             for (int col = 0; col < vl.screenLineLen; col++) {
                 int64_t filePosition = vtest.filePosition(row, col);
+                auto p = vtest.locatePosition(filePosition);
+                EXPECT_EQ(p.first,row);
+                EXPECT_EQ(p.second,min(col,dlen));
                 if (row == vtest.lines->size() - 1 && col >= dlen) {
                     EXPECT_EQ(filePosition, vl.fileSize);
+                    auto p = vtest.locatePosition(filePosition);
+                    EXPECT_EQ(p.first,row);
+                    EXPECT_EQ(p.second,dlen);
                     continue;
                 }
                 const char *send;
@@ -60,8 +66,14 @@ TEST(filePosition, fromEnd) {
             int dlen = dstr.size();
             for (int col = 0; col < vl.screenLineLen; col++) {
                 int64_t filePosition = vtest.filePosition(row, col);
+                auto p = vtest.locatePosition(filePosition);
+                EXPECT_EQ(p.first,row);
+                EXPECT_EQ(p.second,min(col,dlen));
                 if (row == vtest.lines->size() - 1 && col >= dlen) {
                     EXPECT_EQ(filePosition, vl.fileSize);
+                    auto p = vtest.locatePosition(filePosition);
+                    EXPECT_EQ(p.first,row);
+                    EXPECT_EQ(p.second,dlen);
                     continue;
                 }
                 const char *send;
@@ -94,8 +106,14 @@ TEST(filePosition, maxLine) {
             int dlen = dstr.size();
             for (int col = 0; col < vl.screenLineLen; col++) {
                 int64_t filePosition = vtest.filePosition(row, col);
+                auto p = vtest.locatePosition(filePosition);
+                EXPECT_EQ(p.first,row);
+                EXPECT_EQ(p.second,min(col,dlen));
                 if (row == vtest.lines->size() - 1 && col >= dlen) {
                     EXPECT_EQ(filePosition, vl.fileSize);
+                    auto p = vtest.locatePosition(filePosition);
+                    EXPECT_EQ(p.first,row);
+                    EXPECT_EQ(p.second,dlen);
                     continue;
                 }
                 const char *send;
@@ -128,8 +146,14 @@ TEST(filePosition, wrap1) {
             int dlen = dstr.size();
             for (int col = 0; col < vl.screenLineLen; col++) {
                 int64_t filePosition = vtest.filePosition(row, col);
+                auto p = vtest.locatePosition(filePosition);
+                EXPECT_EQ(p.first,row);
+                EXPECT_EQ(p.second,min(col,dlen));
                 if (row == vtest.lines->size() - 1 && col >= dlen) {
                     EXPECT_EQ(filePosition, vl.fileSize);
+                    auto p = vtest.locatePosition(filePosition);
+                    EXPECT_EQ(p.first,row);
+                    EXPECT_EQ(p.second,dlen);
                     continue;
                 }
                 const char *send;
@@ -163,8 +187,16 @@ TEST(filePosition, wrap2) {
             int dlen = dstr.size();
             for (int col = 0; col < vl.screenLineLen; col++) {
                 int64_t filePosition = vtest.filePosition(row, col);
+                auto p = vtest.locatePosition(filePosition);
+                if (col<dlen) {
+                    EXPECT_EQ(p.first,row);
+                    EXPECT_EQ(p.second,col);
+                }
                 if (row == vtest.lines->size() - 1 && col >= dlen) {
                     EXPECT_EQ(filePosition, vl.fileSize);
+                    auto p = vtest.locatePosition(filePosition);
+                    EXPECT_EQ(p.first,row);
+                    EXPECT_EQ(p.second,dlen);
                     continue;
                 }
                 const char *send;
@@ -199,8 +231,14 @@ TEST(filePosition, beginX) {
             int dlen = dstr.size();
             for (int col = 0; col < vl.screenLineLen; col++) {
                 int64_t filePosition = vtest.filePosition(row, col);
+                auto p = vtest.locatePosition(filePosition);
+                EXPECT_EQ(p.first,row);
+                EXPECT_EQ(p.second,min(col,dlen));
                 if (row == vtest.lines->size() - 1 && col >= dlen) {
                     EXPECT_EQ(filePosition, vl.fileSize);
+                    auto p = vtest.locatePosition(filePosition);
+                    EXPECT_EQ(p.first,row);
+                    EXPECT_EQ(p.second,dlen);
                     continue;
                 }
                 const char *send;
