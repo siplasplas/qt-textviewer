@@ -26,10 +26,19 @@ namespace wid {
         setLayout(vLayout);
         connect(hscroll, &QScrollBar::valueChanged, this, &TextViewer::hscrollChanged);
         connect(vscroll, &QScrollBar::valueChanged, this, &TextViewer::vscrollChanged);
+        connect(paintArea, &PaintArea::sizeChanged, this, &TextViewer::sizeChanged);
     }
 
     void TextViewer::hscrollChanged() {
         paintArea->setHorizontal(hscroll->value());
+    }
+
+    void TextViewer::sizeChanged() {
+        int cnt = paintArea->vr.lines->size();
+        if (cnt<=paintArea->screenLineCount)
+            vscroll->setMaximum(0);
+        else
+            vscroll->setMaximum(cnt - paintArea->screenLineCount);
     }
 
     void TextViewer::vscrollChanged() {

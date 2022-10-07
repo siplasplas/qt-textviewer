@@ -13,8 +13,8 @@
 
 namespace wid {
     class PaintArea : public QWidget {
+        Q_OBJECT
         vl::ViewLogic *vl;
-        vl::ViewResult vr;
         int beginX = 0;
         qreal fontWidth, fontHeight;
         QTimer timer;
@@ -40,6 +40,10 @@ namespace wid {
         void trySetCaret(QPoint point);
         void setHorizontal(int beginX);
         void setVertical(int64_t position);
+        vl::ViewResult vr;
+        int screenLineCount;
+    Q_SIGNALS:
+        void sizeChanged();
     };
 }
 

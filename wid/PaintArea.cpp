@@ -121,10 +121,12 @@ namespace wid {
     }
 
     void PaintArea::resizeEvent(QResizeEvent *event) {
-        vl->screenLineCount = ceil((double)event->size().height()/fontHeight);
+        screenLineCount = ceil((double)event->size().height()/fontHeight);
+        vl->screenLineCount = screenLineCount;
         vl->screenLineLen = ceil((double)event->size().width()/fontWidth);
         vl->lo->update();
         vr = vl->lines();
+        sizeChanged();
     }
 
     void PaintArea::wheelVertical(int delta) {

@@ -21,7 +21,7 @@ namespace wid {
         int64_t fileSize;
         void hscrollChanged();
         void vscrollChanged();
-//    void scroll(int deltaX, int deltaY);
+        void sizeChanged();
     };
 
 #endif // VIEWER_TEXTVIEWER_H
