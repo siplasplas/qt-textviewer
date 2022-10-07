@@ -75,8 +75,11 @@ namespace vl {
             int actual;
             UTF utf;
             //below end sentinel does the trick of col >= len(line)
-            return utf.forwardNcodes(vl->addr+li->offset, col,
+            int64_t fpos =  utf.forwardNcodes(vl->addr+li->offset, col,
                                      vl->addr+li->offset+li->len, actual)-vl->addr;
+            if (fpos==li->offset+li->len)
+                fpos = vl->skipLineBreak(fpos);
+            return fpos;
         }
     }
 

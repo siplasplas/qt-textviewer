@@ -45,6 +45,7 @@ namespace vl {
 
     class ViewLogic {
         friend class LineOwner;
+        friend class ViewResult;
     public:
         ViewLogic(const char *addr, int64_t fileSize) : addr(addr), fileSize(fileSize) {
             lo = new LineOwner(this);
