@@ -42,6 +42,7 @@ namespace wid {
         void setVertical(int64_t position);
         vl::ViewResult vr;
         int screenLineCount;
+        int screenLineLen;
     Q_SIGNALS:
         void sizeChanged();
     };

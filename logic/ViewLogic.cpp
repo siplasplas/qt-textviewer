@@ -194,6 +194,22 @@ namespace vl {
         return (double)getRange()/(double)getFileSize();
     }
 
+    int ViewResult::maxLineInWindow() {
+        if (wrap)
+            return vl->screenLineLen;
+        else {
+            int maxlen = 0;
+            for (int i=0; i<infos->size(); i++) {
+                LineInfo* li = infos->at(i);
+                int rawlen = li->len;
+                UTF utf;
+                int dlen = utf.getU32Len(vl->addr+li->offset, vl->addr+li->offset+rawlen);
+                maxlen = std::max(maxlen, dlen);
+            }
+            return maxlen;
+        }
+    }
+
     ViewResult ViewLogic::infosFromBeginScreen(int64_t start) {
         ViewResult vr;
         vr.vl = this;
@@ -308,7 +324,9 @@ namespace vl {
             else if (!wrapMode){
                 int rawBeginX = computeRawBeginX(li->offset, li->len, vr.beginX);
                 assert(rawBeginX>=0 && rawBeginX<=li->len);
-                wstring wstr = fillWithScreenLen(li->offset+rawBeginX, li->len-rawBeginX);
+                wstring wstr;
+                if (rawBeginX<li->len)
+                    wstr = fillWithScreenLen(li->offset+rawBeginX, li->len-rawBeginX);
                 vr.lines->emplace_back(Line(wstr, li, -1));
             } else {
                 assert(!li->wrapLens.empty());
@@ -671,24 +689,30 @@ namespace vl {
         auto p = cacheX.getPrevAndDelta(startLine, beginX);
         int prevX = p.first;
         int delta = p.second;
+        bool store = false;
         if (delta>0) {
             s = utf.forwardNcodes(addr+startLine+prevX, delta, addr+startLine+lineLen, actual);
+            store = actual==delta;
         } else if (delta<0) {
             if (beginX<=-delta)
                 s = nullptr;
-            else
-                s = utf.backwardNcodes(addr+startLine+prevX, -delta, addr+startLine, actual);
+            else {
+                s = utf.backwardNcodes(addr + startLine + prevX, -delta, addr + startLine, actual);
+                store = actual==-delta;
+            }
         }
         else if(prevX)
             return prevX;
         else
             s = nullptr;
 
-        if (!s) //standard
-            s = utf.forwardNcodes(addr+startLine, beginX, addr+startLine+lineLen, actual);
+        if (!s) {//standard
+            s = utf.forwardNcodes(addr + startLine, beginX, addr + startLine + lineLen, actual);
+            store=actual==beginX;
+        }
 
         int rawBeginX = s-(addr+startLine);
-        if (lineLen>=minLineToCacheX)
+        if (store && lineLen>=minLineToCacheX)
             cacheX.add(startLine, beginX, rawBeginX);
         return rawBeginX;
     }

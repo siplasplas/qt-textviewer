@@ -42,6 +42,7 @@ namespace vl {
         int64_t getMaximum();
         int64_t getRange();
         double getRangeRel();
+        int maxLineInWindow();
     private:
         std::pair<int,int> locatePositionWrap(int64_t filePosition) const;
         std::pair<int,int> locatePositionNoWrap(int64_t filePosition) const;

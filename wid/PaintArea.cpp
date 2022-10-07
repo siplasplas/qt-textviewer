@@ -123,7 +123,8 @@ namespace wid {
     void PaintArea::resizeEvent(QResizeEvent *event) {
         screenLineCount = ceil((double)event->size().height()/fontHeight);
         vl->screenLineCount = screenLineCount;
-        vl->screenLineLen = ceil((double)event->size().width()/fontWidth);
+        screenLineLen = ceil((double)event->size().width()/fontWidth);
+        vl->screenLineLen = screenLineLen;
         vl->lo->update();
         vr = vl->lines();
         sizeChanged();

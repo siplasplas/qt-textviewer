@@ -33,13 +33,19 @@ namespace wid {
         paintArea->setHorizontal(hscroll->value());
     }
 
+    void TextViewer::setHScroll() {
+        hscroll->setMaximum(std::max(0,paintArea->vr.maxLineInWindow()-paintArea->screenLineLen));
+    }
+
     void TextViewer::sizeChanged() {
         vscroll->setMaximum(paintArea->vr.getFileSize() - paintArea->vr.getRange());
+        setHScroll();
     }
 
     void TextViewer::vscrollChanged() {
         long double relative = (long double)(vscroll->value())/vscroll->maximum();
         int64_t position = int64_t(relative*fileSize);
         paintArea->setVertical(position);
+        setHScroll();
     }
 }
