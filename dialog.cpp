@@ -12,7 +12,8 @@
 Dialog::Dialog()
 {
     QVBoxLayout *mainLayout = new QVBoxLayout;
-    vmap.openFile("../wid/PaintArea.cpp");
+    //vmap.openFile("../wid/PaintArea.cpp");
+    vmap.openFile("bigfile3.dat");
     //vmap.openFile("../test/selection.txt");
     auto *widget = new wid::TextViewer(vmap.getAddr(), vmap.getFileSize(), this);
     QHBoxLayout *hLayout = new QHBoxLayout;

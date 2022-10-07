@@ -162,6 +162,38 @@ namespace vl {
         return row-1;
     }
 
+    int64_t ViewResult::getRange() {
+        return getMaximum()-getMinimum();
+    }
+
+    int64_t ViewResult::getFileSize() {
+        return vl->fileSize;
+    }
+
+    int64_t ViewResult::getMinimum() {
+        if (wrap) {
+            auto &line = lines->at(0);
+            auto li = line.li;
+            return li->wrapOffset(line.wrapIndex);
+        }
+        else
+            return infos->at(0)->offset;
+    }
+
+    int64_t ViewResult::getMaximum() {
+        if (wrap) {
+            auto &line = lines->back();
+            auto li = line.li;
+            return li->wrapOffsetEnd(line.wrapIndex);
+        }
+        else
+            return infos->back()->next;
+    }
+
+    double ViewResult::getRangeRel() {
+        return (double)getRange()/(double)getFileSize();
+    }
+
     ViewResult ViewLogic::infosFromBeginScreen(int64_t start) {
         ViewResult vr;
         vr.vl = this;

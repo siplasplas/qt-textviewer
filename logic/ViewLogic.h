@@ -37,6 +37,11 @@ namespace vl {
         void clone(const ViewResult &src);
         int64_t filePosition(int row, int col);
         std::pair<int,int> locatePosition(int64_t filePosition);
+        int64_t getFileSize();
+        int64_t getMinimum();
+        int64_t getMaximum();
+        int64_t getRange();
+        double getRangeRel();
     private:
         std::pair<int,int> locatePositionWrap(int64_t filePosition) const;
         std::pair<int,int> locatePositionNoWrap(int64_t filePosition) const;

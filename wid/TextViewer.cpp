@@ -34,11 +34,7 @@ namespace wid {
     }
 
     void TextViewer::sizeChanged() {
-        int cnt = paintArea->vr.lines->size();
-        if (cnt<=paintArea->screenLineCount)
-            vscroll->setMaximum(0);
-        else
-            vscroll->setMaximum(cnt - paintArea->screenLineCount);
+        vscroll->setMaximum(paintArea->vr.getFileSize() - paintArea->vr.getRange());
     }
 
     void TextViewer::vscrollChanged() {
