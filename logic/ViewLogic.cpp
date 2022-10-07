@@ -65,9 +65,11 @@ namespace vl {
             UTF utf;
             int64_t woffs = li->wrapOffset(l.wrapIndex);
             int64_t wend = l.wrapIndex<li->wrapLens.size()-1?woffs+li->wrapLens[l.wrapIndex]:li->offset+li->len;
-            int64_t ret = utf.forwardNcodes(vl->addr+woffs, col,
+            int64_t fpos = utf.forwardNcodes(vl->addr+woffs, col,
                                             vl->addr+wend, actual)-vl->addr;
-            return ret;
+            if (fpos==li->offset+li->len)
+                fpos = vl->skipLineBreak(fpos);
+            return fpos;
         }
         else {
             col += beginX;

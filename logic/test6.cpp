@@ -61,6 +61,9 @@ TEST(locatePosition, fromEnd) {
                 if (col<dlen) {
                     EXPECT_EQ(p.first, row);
                     EXPECT_EQ(p.second, col);
+                } else {
+                    EXPECT_EQ(p.first, row+1);
+                    EXPECT_EQ(p.second, 0);
                 }
             }
         }
@@ -89,6 +92,9 @@ TEST(locatePosition, maxLine) {
                 if (col<dlen) {
                     EXPECT_EQ(p.first, row);
                     EXPECT_EQ(p.second, col);
+                } else {
+                    EXPECT_EQ(p.first, row+1);
+                    EXPECT_EQ(p.second, 0);
                 }
             }
         }
@@ -117,6 +123,9 @@ TEST(locatePosition, wrap1) {
                 if (col<dlen) {
                     EXPECT_EQ(p.first, row);
                     EXPECT_EQ(p.second, col);
+                } else {
+                    EXPECT_EQ(p.first, row+1);
+                    EXPECT_EQ(p.second, 0);
                 }
             }
         }
@@ -146,6 +155,9 @@ TEST(locatePosition, wrap2) {
                 if (col<dlen) {
                     EXPECT_EQ(p.first, row);
                     EXPECT_EQ(p.second, col);
+                } else {
+                    EXPECT_EQ(p.first, row+1);
+                    EXPECT_EQ(p.second, 0);
                 }
             }
         }
@@ -174,6 +186,9 @@ TEST(locatePosition, beginX) {
                 if (col<dlen) {
                     EXPECT_EQ(p.first, row);
                     EXPECT_EQ(p.second, col);
+                } else {
+                    EXPECT_EQ(p.first, row+1);
+                    EXPECT_EQ(p.second, 0);
                 }
             }
         }
