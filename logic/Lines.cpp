@@ -43,7 +43,7 @@ namespace vl {
 
     void LineOwner::initLi(int64_t offset, bool wrap) {
         this->wrap = wrap;
-        int64_t linePos = vl->gotoBeginLine(offset);
+        int64_t linePos = vl->gotoBeginLine(offset, elMaybeInside);
         delete li;
         li = new LineInfo;
         vl->updateInfo(linePos, li);
@@ -51,9 +51,11 @@ namespace vl {
             wrapIndex = getWrapIndex(offset);
             //if after loop wrapIndex == li->wrapLens.size() => position after line, at LF char
         }
+        position = linePos;
     }
 
     void LineOwner::backNlines(int n, int64_t linePos) {
+        if (linePos<=vl->BOMsize) return;
         for (int i=0; i<n; i++) {
             backLine(linePos);
             if (linePos<=vl->BOMsize) break;
@@ -64,14 +66,14 @@ namespace vl {
         if (wrap) {
             wrapIndex--;
             if (wrapIndex<0) {
-                linePos = vl->gotoBeginLine(li->offset-1);
+                linePos = vl->gotoBeginLine(li->offset-1, elTrueEol);
                 vl->updateInfo(linePos, li);
                 assert(!li->wrapLens.empty() || !li->len);
                 wrapIndex = (int)li->wrapLens.size()-1;
             }
         }
         else {
-            linePos = vl->gotoBeginLine(li->offset-1);
+            linePos = vl->gotoBeginLine(li->offset-1, elTrueEol);
             vl->updateInfo(linePos, li);
         }
     }

@@ -368,7 +368,7 @@ namespace vl {
         return utf.u32to16(dstr);
     }
 
-    int64_t ViewLogic::gotoBeginLine(int64_t offset) {
+    int64_t ViewLogic::gotoBeginLine(int64_t offset, EndLine maybeInside) {
         assert(offset<=fileSize);
         if (offset==fileSize) return fileSize;
         if (isNewlineChar(addr[offset])) {
@@ -377,7 +377,7 @@ namespace vl {
                 return offset;
             offset--;
         }
-        return gotoBeginNonEmptyLine(offset);
+        return gotoBeginNonEmptyLine(offset, maybeInside);
     }
 
     int64_t ViewLogic::gotoFirstOfCRLF(int64_t offset) {
@@ -408,10 +408,13 @@ namespace vl {
         return offset<=BOMsize || isNewlineChar(addr[offset-1]);
     }
 
-    int64_t ViewLogic::gotoBeginNonEmptyLine(int64_t start) {
-        int len = cache.getPrevLineLen(start);
-        if (len)
-            return start-len;
+    int64_t ViewLogic::gotoBeginNonEmptyLine(int64_t start, EndLine maybeInside) {
+        assert(start>=BOMsize);
+        if (maybeInside==elTrueEol) {
+            int len = cache.getPrevLineLen(start);
+            if (len)
+                return start - len;
+        }
         assert(start<fileSize && !isNewlineChar(addr[start]));
         int64_t possibleBreakAt = (start/maxLineLen)*maxLineLen;
         int64_t possibleBreakCorrected = correctPossibleBreak(possibleBreakAt);
@@ -427,14 +430,10 @@ namespace vl {
             }
             offset--;
         }
-        if (start-offset>=minLineToCache)
+        if (maybeInside==elTrueEol && start-offset>=minLineToCache)
             cache.putPrev(start, (int)(start-offset));
         return offset;
     }
-
-//    ViewResult ViewLogic::lines(int64_t position, int beginX) {
-//        return lines(getBeginPos(position), beginX);
-//    }
 
     bool ViewLogic::isFirstChunkStart(int64_t offset) {
         return offset<=BOMsize || isNewlineChar(addr[offset-1]);
@@ -605,7 +604,7 @@ namespace vl {
             if (vr.firstWrapIndex < 0) {
                 vr.firstWrapIndex = firstLi->wrapLens.size() - 1;
                 auto *li = new LineInfo;
-                int64_t linePos = gotoBeginLine(li->offset-1);
+                int64_t linePos = gotoBeginLine(li->offset-1, elTrueEol);
                 updateInfo(linePos, li);
                 vr.infos->insert(vr.infos->begin(), li);
                 vr.infos->pop_back();
@@ -613,7 +612,7 @@ namespace vl {
         } else {
             auto *li = new LineInfo;
             if (firstLi->offset==BOMsize) return 0;
-            int64_t linePos = gotoBeginLine(firstLi->offset-1);
+            int64_t linePos = gotoBeginLine(firstLi->offset-1, elTrueEol);
             updateInfo(linePos, li);
             vr.infos->insert(vr.infos->begin(), li);
             vr.infos->pop_back();

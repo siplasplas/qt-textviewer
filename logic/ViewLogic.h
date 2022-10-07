@@ -48,6 +48,8 @@ namespace vl {
         int locatePositionLoop(int64_t filePosition, int64_t &wrapOffset) const;
     };
 
+    enum EndLine {elMaybeInside, elTrueEol};
+
     class ViewLogic {
         friend class LineOwner;
         friend class ViewResult;
@@ -84,10 +86,10 @@ namespace vl {
         int64_t searchEndOfLine(int64_t startOffset);
         int64_t skipLineBreak(int64_t pos);
         std::wstring fillWithScreenLen(int64_t offset, int len);
-        int64_t gotoBeginLine(int64_t offset);
+        int64_t gotoBeginLine(int64_t offset, EndLine maybeInside);
         int64_t gotoFirstOfCRLF(int64_t offset);
         bool lineIsEmpty(int64_t offset);
-        int64_t gotoBeginNonEmptyLine(int64_t start);
+        int64_t gotoBeginNonEmptyLine(int64_t start, EndLine maybeInside);
         bool isFirstChunkStart(int64_t offset);
         bool isFirstChunkInside(int64_t offset);
         bool startInsideSegment(int64_t offset);
