@@ -9,6 +9,7 @@
 #include "../utf/UTF.hpp"
 #include "Cache.h"
 #include "CacheX.h"
+#include "CacheMax.h"
 
 namespace vl {
 
@@ -47,6 +48,7 @@ namespace vl {
         std::pair<int,int> locatePositionWrap(int64_t filePosition) const;
         std::pair<int,int> locatePositionNoWrap(int64_t filePosition) const;
         int locatePositionLoop(int64_t filePosition, int64_t &wrapOffset) const;
+        CacheMax cacheMax;
     };
 
     enum EndLine {elMaybeInside, elTrueEol};

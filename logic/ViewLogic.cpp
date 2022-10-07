@@ -202,8 +202,12 @@ namespace vl {
             for (int i=0; i<infos->size(); i++) {
                 LineInfo* li = infos->at(i);
                 int rawlen = li->len;
-                UTF utf;
-                int dlen = utf.getU32Len(vl->addr+li->offset, vl->addr+li->offset+rawlen);
+                int dlen = cacheMax.get(li->offset);
+                if (dlen<0) {
+                    UTF utf;
+                    int dlen = utf.getU32Len(vl->addr + li->offset, vl->addr + li->offset + rawlen);
+                    cacheMax.add(li->offset, dlen);
+                }
                 maxlen = std::max(maxlen, dlen);
             }
             return maxlen;

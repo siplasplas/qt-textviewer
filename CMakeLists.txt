@@ -18,7 +18,8 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 set(LOGIC_SOURCES logic/ViewLogic.cpp logic/ViewLogic.h
         logic/Lines.cpp logic/Lines.h logic/Util.cpp logic/Util.h
         logic/Cache.cpp logic/Cache.h
-        logic/CacheX.cpp logic/CacheX.h)
+        logic/CacheX.cpp logic/CacheX.h
+        logic/CacheMax.cpp logic/CacheMax.h)
 
 set(PROJECT_SOURCES
         main.cpp
