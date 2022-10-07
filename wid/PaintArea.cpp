@@ -49,13 +49,7 @@ namespace wid {
         pen.setWidth(1);
         painter.setPen(pen);
         if (vr.lines) {
-            QString qstr = QString::fromWCharArray(vr[caretPos.y()].c_str());
-            QChar qchar;
-            if (qstr.length() <= caretPos.x()) {
-                caretPos.setX(qstr.length());
-                qchar = ' ';
-            } else qchar = qstr[caretPos.x()];
-
+            QChar qchar = updateCaretPos();
             if (oneCharRepaint) {
                 if (selection.charSelected(caretPos, vr))
                     painter.fillRect(R, getSelColor());
@@ -76,6 +70,8 @@ namespace wid {
                     } else
                         painter.drawText(R, Qt::AlignLeft, qstr);
                 }
+                int y = vr.lines->size()*fontHeight;
+                painter.fillRect(0,y, QWidget::width(), QWidget::height()-y, Qt::white);
             }
         }
         if (drawCaret && hasFocus()) {
@@ -86,6 +82,20 @@ namespace wid {
             int y = (int)(caretPos.y()*fontHeight);
             painter.drawLine(x, y+1, x, y+fontHeight-1);
         }
+    }
+
+    QChar PaintArea::updateCaretPos() {
+        if (caretPos.y() >= vr.lines->size()) {
+            caretPos.setY(vr.lines->size() - 1);
+            caretPos.setX(width() / fontWidth);
+        }
+        QString qstr = QString::fromWCharArray(vr[caretPos.y()].c_str());
+        QChar qchar;
+        if (qstr.length() <= caretPos.x()) {
+            caretPos.setX(qstr.length());
+            qchar = ' ';
+        } else qchar = qstr[caretPos.x()];
+        return qchar;
     }
 
     QColor PaintArea::getSelColor() {

@@ -23,7 +23,8 @@ namespace wid {
         QPoint caretPos;
         void doBlinkMethod();
         void drawSelBackground(QPainter &painter, int row);
-        static QColor getSelColor() ;
+        static QColor getSelColor();
+        QChar updateCaretPos();
     protected:
         void paintEvent(QPaintEvent *event) override;
         void resizeEvent(QResizeEvent *event) override;
