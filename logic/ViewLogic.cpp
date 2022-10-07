@@ -425,8 +425,11 @@ namespace vl {
         int64_t offset = start;
         while (offset>BOMsize && !isNewlineChar(addr[offset-1])) {
             if (offset==possibleBreakCorrected) {
-                if (!isFirstChunkInside(offset))
+                if (!isFirstChunkInside(offset)) {
+                    if (maybeInside==elTrueEol && start-offset>=minLineToCache)
+                        cache.putPrev(start, (int)(start-offset));
                     return offset;
+                }
             }
             offset--;
         }
