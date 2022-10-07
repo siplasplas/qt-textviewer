@@ -34,7 +34,7 @@ namespace wid {
     }
 
     void TextViewer::setHScroll() {
-        hscroll->setMaximum(std::max(0,paintArea->vr.maxLineInWindow()-paintArea->screenLineLen));
+        hscroll->setMaximum(std::max(0,paintArea->vr.maxLineInWindow()+1-paintArea->screenLineLen));
     }
 
     void TextViewer::sizeChanged() {
