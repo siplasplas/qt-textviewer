@@ -25,13 +25,12 @@ TEST(locatePosition, whole) {
             dstring dstr = utf.u16to32(wstr);
             int dlen = dstr.size();
             for (int col = 0; col < vl.screenLineLen; col++) {
-
+                int64_t filePosition = vtest.filePosition(row, col);
+                auto p = vtest.locatePosition(filePosition);
                 if (col<dlen) {
-                    //EXPECT_EQ(p.first, row);
-                    //EXPECT_EQ(p.second, col);
+                    EXPECT_EQ(p.first, row);
+                    EXPECT_EQ(p.second, col);
                 } else {
-                    int64_t filePosition = vtest.filePosition(row, col);
-                    auto p = vtest.locatePosition(filePosition);
                     EXPECT_EQ(p.first, row+1);
                     EXPECT_EQ(p.second, 0);
                 }
