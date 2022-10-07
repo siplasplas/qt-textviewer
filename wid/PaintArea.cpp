@@ -10,7 +10,35 @@
 #include "PaintArea.h"
 
 namespace wid {
+    void PaintArea::drawSelBackground(QPainter &painter, int row) {
+        int selColBeg = selection.selColBeg(row, vr);
+        int selColEnd = selection.selColEnd(row, vr);
+        if (selColBeg==-1) {
+            if (selColEnd==-1)
+                painter.fillRect(0,row*fontHeight, QWidget::width(),(row+1)*fontHeight, Qt::white);
+            else
+                assert(false);
+        } else if (selColBeg==0) {
+            if (selColEnd==-1)
+                painter.fillRect(0,row*fontHeight, QWidget::width(),(row+1)*fontHeight, getSelColor());
+            else {
+                painter.fillRect(0,row*fontHeight, selColEnd*fontWidth,(row+1)*fontHeight, getSelColor());
+                painter.fillRect(selColEnd*fontWidth,row*fontHeight, QWidget::width()-selColEnd*fontWidth,(row+1)*fontHeight, Qt::white);
+            }
+        } else {
+            if (selColEnd==-1) {
+                painter.fillRect(0,row*fontHeight, selColBeg*fontWidth,(row+1)*fontHeight, Qt::white);
+                painter.fillRect(selColBeg*fontWidth,row*fontHeight, QWidget::width()-selColBeg*fontWidth,(row+1)*fontHeight, getSelColor());
+            } else {
+                painter.fillRect(0,row*fontHeight, selColBeg*fontWidth,(row+1)*fontHeight, Qt::white);
+                painter.fillRect(selColBeg*fontWidth,row*fontHeight, (selColEnd-selColBeg)*fontWidth,(row+1)*fontHeight, getSelColor());
+                painter.fillRect(selColEnd*fontWidth,row*fontHeight, QWidget::width()-selColEnd*fontWidth,(row+1)*fontHeight, getSelColor());
+            }
+        }
+    }
+
     void PaintArea::paintEvent(QPaintEvent *event) {
+        selection.compute(vr);
         QPainter painter(this);
         painter.setRenderHint(QPainter::TextAntialiasing);
         QRect R = event->rect();
@@ -28,17 +56,15 @@ namespace wid {
                 qchar = ' ';
             } else qchar = qstr[caretPos.x()];
 
-            QColor selColor(0xa6,0xd2,0xff);
-
             if (oneCharRepaint) {
                 if (selection.charSelected(caretPos, vr))
-                    painter.fillRect(R, selColor);
+                    painter.fillRect(R, getSelColor());
                 else
                     painter.fillRect(R, Qt::white);
                 painter.drawText(R, Qt::AlignLeft, qchar);
             } else {
-                painter.fillRect(R, Qt::white);
                 for (int i = 0; i < vr.lines->size(); i++) {
+                    drawSelBackground(painter, i);
                     QRect R(0, i * fontHeight, this->rect().width(), fontHeight);
                     QString qstr = QString::fromWCharArray(vr[i].c_str());
                     if (i == vr.lines->size() - 1 && qstr.isEmpty()) {
@@ -60,6 +86,11 @@ namespace wid {
             int y = (int)(caretPos.y()*fontHeight);
             painter.drawLine(x, y+1, x, y+fontHeight-1);
         }
+    }
+
+    QColor PaintArea::getSelColor() {
+        QColor selColor(0xa6, 0xd2, 0xff);
+        return selColor;
     }
 
     PaintArea::PaintArea(const char *addr, int64_t fileSize, QWidget *parent) : QWidget(parent) {
