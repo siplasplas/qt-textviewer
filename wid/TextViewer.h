@@ -18,6 +18,7 @@ namespace wid {
 //    void mouseMoveEvent(QMouseEvent *event) override;
 //    void mouseReleaseEvent(QMouseEvent *event) override;
     private:
+        const int MAXVSCROLL = 10000;
         int64_t fileSize;
         void hscrollChanged();
         void vscrollChanged();

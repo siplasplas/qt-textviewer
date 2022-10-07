@@ -38,7 +38,11 @@ namespace wid {
     }
 
     void TextViewer::sizeChanged() {
-        vscroll->setMaximum(paintArea->vr.getFileSize() - paintArea->vr.getRange());
+        int64_t range64 = paintArea->vr.getFileSize() - paintArea->vr.getRange();
+        if (range64<MAXVSCROLL)
+            vscroll->setMaximum((int)range64);
+        else
+            vscroll->setMaximum(MAXVSCROLL);
         setHScroll();
     }
 
