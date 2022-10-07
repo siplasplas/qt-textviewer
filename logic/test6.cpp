@@ -29,7 +29,9 @@ TEST(locatePosition, whole) {
                 auto p = vtest.locatePosition(filePosition);
                 if (col<dlen) {
                     EXPECT_EQ(p.first, row);
-                    EXPECT_EQ(p.second, min(col, dlen));
+                    EXPECT_EQ(p.second, col);
+                } else {
+                    
                 }
             }
         }
@@ -57,7 +59,7 @@ TEST(locatePosition, fromEnd) {
                 auto p = vtest.locatePosition(filePosition);
                 if (col<dlen) {
                     EXPECT_EQ(p.first, row);
-                    EXPECT_EQ(p.second, min(col, dlen));
+                    EXPECT_EQ(p.second, col);
                 }
             }
         }
@@ -85,7 +87,7 @@ TEST(locatePosition, maxLine) {
                 auto p = vtest.locatePosition(filePosition);
                 if (col<dlen) {
                     EXPECT_EQ(p.first, row);
-                    EXPECT_EQ(p.second, min(col, dlen));
+                    EXPECT_EQ(p.second, col);
                 }
             }
         }
@@ -113,7 +115,7 @@ TEST(locatePosition, wrap1) {
                 auto p = vtest.locatePosition(filePosition);
                 if (col<dlen) {
                     EXPECT_EQ(p.first, row);
-                    EXPECT_EQ(p.second, min(col, dlen));
+                    EXPECT_EQ(p.second, col);
                 }
             }
         }
@@ -142,7 +144,7 @@ TEST(locatePosition, wrap2) {
                 auto p = vtest.locatePosition(filePosition);
                 if (col<dlen) {
                     EXPECT_EQ(p.first, row);
-                    EXPECT_EQ(p.second, min(col, dlen));
+                    EXPECT_EQ(p.second, col);
                 }
             }
         }
@@ -170,7 +172,7 @@ TEST(locatePosition, beginX) {
                 auto p = vtest.locatePosition(filePosition);
                 if (col<dlen) {
                     EXPECT_EQ(p.first, row);
-                    EXPECT_EQ(p.second, min(col, dlen));
+                    EXPECT_EQ(p.second, col);
                 }
             }
         }
