@@ -17,6 +17,7 @@ namespace vl {
         int64_t next;
         std::vector<int> wrapLens;
         int64_t wrapOffset(int wrapIndex) const;
+        int64_t wrapOffsetEnd(int wrapIndex) const;
         bool operator==(const LineInfo &src) const;
         bool operator!=(const LineInfo &src) const;
     };

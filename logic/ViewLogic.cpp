@@ -91,6 +91,11 @@ namespace vl {
     }
 
     pair<int, int> ViewResult::locatePositionNoWrap(int64_t filePosition) const {
+        if (filePosition<infos->at(0)->offset) {
+            return make_pair(-1,0);
+        } else if (filePosition>=infos->back()->next) {
+            return make_pair(lines->size(),0);
+        }
         size_t idxL = 0;
         size_t idxR = infos->size();
         size_t idxMid;
@@ -112,6 +117,12 @@ namespace vl {
 
     pair<int, int> ViewResult::locatePositionWrap(int64_t filePosition) const {
         assert(!infos->empty());
+        assert(infos->back()->wrapLens.size()>lastWrapIndex);
+        if (filePosition < infos->at(0)->wrapOffset(firstWrapIndex)) {
+            return make_pair(-1,0);
+        } else if (filePosition >= infos->back()->wrapOffsetEnd(lastWrapIndex)) {
+            return make_pair(lines->size(),0);
+        }
         int64_t wrapOffset=0;
         pair<int, int> p;
         p.first = locatePositionLoop(filePosition, wrapOffset);
@@ -151,9 +162,12 @@ namespace vl {
         vr.wrap = wrapMode>0;
         vr.infos = new InfoVec;
         int64_t pos = start;
-        while (pos<fileSize && vr.infos->size()<screenLineCount) {
+        int numLines = 0;
+        int fwi = vr.wrap? lo->wrapIndex: 0;
+        assert(fwi>=0);
+        while (pos<fileSize && numLines<screenLineCount+fwi) {
             auto *li = new LineInfo;
-            updateInfo(pos, li);
+            numLines += updateInfo(pos, li);
             pos = li->next;
             vr.infos->push_back(li);
         }
@@ -168,7 +182,7 @@ namespace vl {
         return vr;
     }
 
-    void ViewLogic::updateInfo(int64_t offset, LineInfo *li) {
+    int ViewLogic::updateInfo(int64_t offset, LineInfo *li) {
         li->offset = offset;
         int64_t endPos;
         if (isNewlineChar(addr[offset]))
@@ -184,6 +198,10 @@ namespace vl {
             li->next = fileSize;
         else
             li->next = skipLineBreak(endPos);
+        if (wrapMode>0)
+            return li->wrapLens.size();
+        else
+            return 1;
     }
 
     bool ViewLogic::isNewlineChar(const char c) {

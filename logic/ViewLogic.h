@@ -74,7 +74,7 @@ namespace vl {
         const int minLineToCache = 1000;
         ViewResult infosFromBeginScreen(int64_t start);
         void fillLines(ViewResult &vr);
-        void updateInfo(int64_t offset, LineInfo* li);
+        int updateInfo(int64_t offset, LineInfo* li);
         int64_t searchEndOfLine(int64_t startOffset);
         int64_t skipLineBreak(int64_t pos);
         std::wstring fillWithScreenLen(int64_t offset, int len);

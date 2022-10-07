@@ -8,7 +8,7 @@
 using namespace std;
 using namespace vl;
 
-TEST(filePosition, whole) {
+TEST(locatePosition, whole) {
     const string names[] = {"shortwrap.txt", "utf8.txt", "midlines.txt"};
     for (int k=0; k<3; k++) {
         string content = makeContent(string("../test/")+names[k]);
@@ -27,28 +27,16 @@ TEST(filePosition, whole) {
             for (int col = 0; col < vl.screenLineLen; col++) {
                 int64_t filePosition = vtest.filePosition(row, col);
                 auto p = vtest.locatePosition(filePosition);
-                EXPECT_EQ(p.first,row);
-                EXPECT_EQ(p.second,min(col,dlen));
-                if (row == vtest.lines->size() - 1 && col >= dlen) {
-                    EXPECT_EQ(filePosition, vl.fileSize);
-                    auto p = vtest.locatePosition(filePosition);
-                    EXPECT_EQ(p.first,row);
-                    EXPECT_EQ(p.second,dlen);
-                    continue;
-                }
-                const char *send;
-                uint32_t expectChar = utf.one8to32(vl.addr+filePosition, vl.addr+vl.fileSize, &send);
-                if (col < dlen) {
-                    EXPECT_EQ(dstr[col], expectChar);
-                } else {
-                    EXPECT_EQ(expectChar==10 || expectChar==13, true);
+                if (col<dlen) {
+                    EXPECT_EQ(p.first, row);
+                    EXPECT_EQ(p.second, min(col, dlen));
                 }
             }
         }
     }
 }
 
-TEST(filePosition, fromEnd) {
+TEST(locatePosition, fromEnd) {
     const string names[] = {"shortwrap.txt", "utf8.txt", "midlines.txt"};
     for (int k=0; k<3; k++) {
         string content = makeContent(string("../test/")+names[k]);
@@ -67,28 +55,16 @@ TEST(filePosition, fromEnd) {
             for (int col = 0; col < vl.screenLineLen; col++) {
                 int64_t filePosition = vtest.filePosition(row, col);
                 auto p = vtest.locatePosition(filePosition);
-                EXPECT_EQ(p.first,row);
-                EXPECT_EQ(p.second,min(col,dlen));
-                if (row == vtest.lines->size() - 1 && col >= dlen) {
-                    EXPECT_EQ(filePosition, vl.fileSize);
-                    auto p = vtest.locatePosition(filePosition);
-                    EXPECT_EQ(p.first,row);
-                    EXPECT_EQ(p.second,dlen);
-                    continue;
-                }
-                const char *send;
-                uint32_t expectChar = utf.one8to32(vl.addr+filePosition, vl.addr+vl.fileSize, &send);
-                if (col < dlen) {
-                    EXPECT_EQ(dstr[col], expectChar);
-                } else {
-                    EXPECT_EQ(expectChar==10 || expectChar==13, true);
+                if (col<dlen) {
+                    EXPECT_EQ(p.first, row);
+                    EXPECT_EQ(p.second, min(col, dlen));
                 }
             }
         }
     }
 }
 
-TEST(filePosition, maxLine) {
+TEST(locatePosition, maxLine) {
     const string names[] = {"shortwrap.txt", "utf8.txt", "midlines.txt"};
     for (int k=0; k<3; k++) {
         string content = makeContent(string("../test/")+names[k]);
@@ -107,28 +83,16 @@ TEST(filePosition, maxLine) {
             for (int col = 0; col < vl.screenLineLen; col++) {
                 int64_t filePosition = vtest.filePosition(row, col);
                 auto p = vtest.locatePosition(filePosition);
-                EXPECT_EQ(p.first,row);
-                EXPECT_EQ(p.second,min(col,dlen));
-                if (row == vtest.lines->size() - 1 && col >= dlen) {
-                    EXPECT_EQ(filePosition, vl.fileSize);
-                    auto p = vtest.locatePosition(filePosition);
-                    EXPECT_EQ(p.first,row);
-                    EXPECT_EQ(p.second,dlen);
-                    continue;
-                }
-                const char *send;
-                uint32_t expectChar = utf.one8to32(vl.addr+filePosition, vl.addr+vl.fileSize, &send);
-                if (col < dlen) {
-                    EXPECT_EQ(dstr[col], expectChar);
-                } else {
-                    EXPECT_EQ(expectChar==10 || expectChar==13, true);
+                if (col<dlen) {
+                    EXPECT_EQ(p.first, row);
+                    EXPECT_EQ(p.second, min(col, dlen));
                 }
             }
         }
     }
 }
 
-TEST(filePosition, wrap1) {
+TEST(locatePosition, wrap1) {
     const string names[] = {"shortwrap.txt", "utf8.txt", "midlines.txt"};
     for (int k=0; k<3; k++) {
         string content = makeContent(string("../test/")+names[k]);
@@ -147,21 +111,9 @@ TEST(filePosition, wrap1) {
             for (int col = 0; col < vl.screenLineLen; col++) {
                 int64_t filePosition = vtest.filePosition(row, col);
                 auto p = vtest.locatePosition(filePosition);
-                EXPECT_EQ(p.first,row);
-                EXPECT_EQ(p.second,min(col,dlen));
-                if (row == vtest.lines->size() - 1 && col >= dlen) {
-                    EXPECT_EQ(filePosition, vl.fileSize);
-                    auto p = vtest.locatePosition(filePosition);
-                    EXPECT_EQ(p.first,row);
-                    EXPECT_EQ(p.second,dlen);
-                    continue;
-                }
-                const char *send;
-                uint32_t expectChar = utf.one8to32(vl.addr+filePosition, vl.addr+vl.fileSize, &send);
-                if (col < dlen) {
-                    EXPECT_EQ(dstr[col], expectChar);
-                } else {
-                    EXPECT_EQ(expectChar==10 || expectChar==13, true);
+                if (col<dlen) {
+                    EXPECT_EQ(p.first, row);
+                    EXPECT_EQ(p.second, min(col, dlen));
                 }
             }
         }
@@ -169,7 +121,7 @@ TEST(filePosition, wrap1) {
 }
 
 
-TEST(filePosition, wrap2) {
+TEST(locatePosition, wrap2) {
     const string names[] = {"shortwrap.txt", "utf8.txt", "midlines.txt"};
     for (int k=0; k<3; k++) {
         string content = makeContent(string("../test/")+names[k]);
@@ -189,31 +141,15 @@ TEST(filePosition, wrap2) {
                 int64_t filePosition = vtest.filePosition(row, col);
                 auto p = vtest.locatePosition(filePosition);
                 if (col<dlen) {
-                    EXPECT_EQ(p.first,row);
-                    EXPECT_EQ(p.second,col);
-                }
-                if (row == vtest.lines->size() - 1 && col >= dlen) {
-                    EXPECT_EQ(filePosition, vl.fileSize);
-                    auto p = vtest.locatePosition(filePosition);
-                    EXPECT_EQ(p.first,row);
-                    EXPECT_EQ(p.second,dlen);
-                    continue;
-                }
-                const char *send;
-                uint32_t expectChar = utf.one8to32(vl.addr+filePosition, vl.addr+vl.fileSize, &send);
-                if (col < dlen) {
-                    EXPECT_EQ(dstr[col], expectChar);
-                } else {
-                    int64_t prevFilePosition = vtest.filePosition(row, dlen-1);
-                    if (dlen>0)
-                        EXPECT_EQ(filePosition, prevFilePosition+utf.one8len(dstr[dlen-1]));
+                    EXPECT_EQ(p.first, row);
+                    EXPECT_EQ(p.second, min(col, dlen));
                 }
             }
         }
     }
 }
 
-TEST(filePosition, beginX) {
+TEST(locatePosition, beginX) {
     const string names[] = {"shortwrap.txt", "utf8.txt", "midlines.txt"};
     for (int k=0; k<3; k++) {
         string content = makeContent(string("../test/")+names[k]);
@@ -232,23 +168,75 @@ TEST(filePosition, beginX) {
             for (int col = 0; col < vl.screenLineLen; col++) {
                 int64_t filePosition = vtest.filePosition(row, col);
                 auto p = vtest.locatePosition(filePosition);
-                EXPECT_EQ(p.first,row);
-                EXPECT_EQ(p.second,min(col,dlen));
-                if (row == vtest.lines->size() - 1 && col >= dlen) {
-                    EXPECT_EQ(filePosition, vl.fileSize);
-                    auto p = vtest.locatePosition(filePosition);
-                    EXPECT_EQ(p.first,row);
-                    EXPECT_EQ(p.second,dlen);
-                    continue;
-                }
-                const char *send;
-                uint32_t expectChar = utf.one8to32(vl.addr+filePosition, vl.addr+vl.fileSize, &send);
-                if (col < dlen) {
-                    EXPECT_EQ(dstr[col], expectChar);
-                } else {
-                    EXPECT_EQ(expectChar==10 || expectChar==13, true);
+                if (col<dlen) {
+                    EXPECT_EQ(p.first, row);
+                    EXPECT_EQ(p.second, min(col, dlen));
                 }
             }
         }
     }
+}
+
+TEST(locatePosition, before) {
+    string content = makeContent("../test/midlines.txt");
+    ViewLogic vl(content.c_str(), content.length());
+    vl.screenLineLen = 10;
+    vl.screenLineCount = 5;
+    vl.wrapMode = 0;
+    vl.maxLineLen = 1000;
+    vl.lo->gotoProportional(vl.fileSize);
+    auto vtest = vl.lines();
+    auto p = vtest.locatePosition(0);
+    EXPECT_EQ(p.first,-1);
+    EXPECT_EQ(p.second,0);
+    int64_t begPos = vtest.filePosition(0,0);
+    p = vtest.locatePosition(begPos-1);
+    EXPECT_EQ(p.first,-1);
+    EXPECT_EQ(p.second,0);
+}
+
+TEST(locatePosition, beforeWrap) {
+    string content = makeContent("../test/midlines.txt");
+    ViewLogic vl(content.c_str(), content.length());
+    vl.screenLineLen = 10;
+    vl.screenLineCount = 5;
+    vl.wrapMode = 1;
+    vl.maxLineLen = 1000;
+    vl.lo->gotoProportional(vl.fileSize);
+    auto vtest = vl.lines();
+    auto p = vtest.locatePosition(0);
+    EXPECT_EQ(p.first,-1);
+    EXPECT_EQ(p.second,0);
+    int64_t begPos = vtest.filePosition(0,0);
+    p = vtest.locatePosition(begPos-1);
+    EXPECT_EQ(p.first,-1);
+    EXPECT_EQ(p.second,0);
+}
+
+TEST(locatePosition, after) {
+    string content = makeContent("../test/midlines.txt");
+    ViewLogic vl(content.c_str(), content.length());
+    vl.screenLineLen = 10;
+    vl.screenLineCount = 5;
+    vl.wrapMode = 0;
+    vl.maxLineLen = 1000;
+    vl.lo->gotoFromBegin(0);
+    auto vtest = vl.lines();
+    auto p = vtest.locatePosition(vl.fileSize);
+    EXPECT_EQ(p.first,vl.screenLineCount);
+    EXPECT_EQ(p.second,0);
+}
+
+TEST(locatePosition, afterWrap) {
+    string content = makeContent("../test/midlines.txt");
+    ViewLogic vl(content.c_str(), content.length());
+    vl.screenLineLen = 10;
+    vl.screenLineCount = 5;
+    vl.wrapMode = 1;
+    vl.maxLineLen = 1000;
+    vl.lo->gotoFromBegin(0);
+    auto vtest = vl.lines();
+    auto p = vtest.locatePosition(vl.fileSize);
+    EXPECT_EQ(p.first,vl.screenLineCount);
+    EXPECT_EQ(p.second,0);
 }

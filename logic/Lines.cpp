@@ -32,6 +32,13 @@ namespace vl {
         return woffset;
     }
 
+    int64_t LineInfo::wrapOffsetEnd(int wrapIndex) const {
+        int64_t woffset = offset;
+        for (int i=0; i<=wrapIndex; i++)
+            woffset += wrapLens[i];
+        return woffset;
+    }
+
     LineOwner::LineOwner(ViewLogic* vl) : vl(vl) {}
 
     void LineOwner::initLi(int64_t offset, bool wrap) {
