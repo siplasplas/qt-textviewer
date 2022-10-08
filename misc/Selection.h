@@ -7,7 +7,7 @@
 
 #include <cstdint>
 #include <QPoint>
-#include "../logic/ViewLogic.h"
+#include "logic/ViewLogic.h"
 
 struct Selection {
     int64_t selBegin; //inclusive

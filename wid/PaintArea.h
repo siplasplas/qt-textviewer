@@ -9,7 +9,7 @@
 #include <QPaintEvent>
 #include <QTimer>
 #include "logic/ViewLogic.h"
-#include "Selection.h"
+#include "misc/Selection.h"
 
 namespace wid {
     class PaintArea : public QWidget {
